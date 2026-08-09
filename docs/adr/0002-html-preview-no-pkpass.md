@@ -1,0 +1,3 @@
+# HTML Live Preview; no .pkpass generation in the app
+
+v1 does not call `PassGenerator.Generate()`, does not ship dummy certificates, and does not offer a `.pkpass` download. Visual fidelity is an HTML/CSS **Live Preview**. `dotnet-passbook` remains a PackageReference so Apple **Code Snippets** use real library types and emit a full pasteable sample (including `Generate()` lines for the *integrator’s* backend). A dummy-signed `.pkpass` would not open in Wallet, so it would not provide a true on-device visual preview — only zip inspection — which we deferred. Cert/openssl/`CertificateService` paths are removed from the product.
