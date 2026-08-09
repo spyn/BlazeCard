@@ -10,7 +10,6 @@ public class BlazeCardStateService : IBlazeCardStateService
     private readonly IApplePassService _apple;
     private readonly IGoogleWalletService _google;
     private readonly BlazeCardOptions _options;
-    private readonly List<VisualComponent> _visualComponents = [];
     private CancellationTokenSource? _emitCts;
     private CancellationTokenSource? _parseCts;
 
@@ -28,9 +27,9 @@ public class BlazeCardStateService : IBlazeCardStateService
 
     public CardModel Card { get; private set; }
     public AppMode CurrentMode { get; private set; } = AppMode.Form;
-    public Skin Skin { get; private set; } = Skin.Hbf;
+    public Skin Skin { get; private set; } = Skin.Blaze;
     public AppearanceMode Appearance { get; private set; } = AppearanceMode.Light;
-    public PreviewFocus PreviewFocus { get; private set; } = PreviewFocus.Dual;
+    public PreviewFocus PreviewFocus { get; private set; } = PreviewFocus.Apple;
 
     public string AppleCodeSnippet { get; private set; } = string.Empty;
     public string GoogleCodeSnippet { get; private set; } = string.Empty;
@@ -39,16 +38,12 @@ public class BlazeCardStateService : IBlazeCardStateService
     public bool HasCodeSyncWarning { get; private set; }
     public string? CodeSyncWarningMessage { get; private set; }
 
-    public IReadOnlyList<VisualComponent> VisualComponents => _visualComponents;
-
     public event Action? OnStateChanged;
 
     public void SetMode(AppMode mode)
     {
         if (CurrentMode == mode) return;
         CurrentMode = mode;
-        if (mode == AppMode.Visual)
-            ProjectVisualFromCard();
         Notify();
     }
 
@@ -113,23 +108,44 @@ public class BlazeCardStateService : IBlazeCardStateService
         Notify();
     }
 
-    public void SetImage(ImageSlot slot, string? base64DataUri)
+    public void SetPassbookImage(Passbook.Generator.PassbookImage image, string? dataUri)
+    {
+        Card.SetPassbookImage(image, dataUri);
+        ScheduleEmit();
+        Notify();
+    }
+
+    public void SetGoogleImage(GoogleImageSlot slot, string? dataUri)
     {
         switch (slot)
         {
-            case ImageSlot.Logo: Card.LogoImage = base64DataUri; break;
-            case ImageSlot.Icon: Card.IconImage = base64DataUri; break;
-            case ImageSlot.Strip: Card.StripImage = base64DataUri; break;
-            case ImageSlot.Hero: Card.HeroImage = base64DataUri; break;
-            case ImageSlot.Thumbnail: Card.ThumbnailImage = base64DataUri; break;
+            case GoogleImageSlot.Hero:
+                Card.HeroImage = dataUri;
+                break;
+            case GoogleImageSlot.WideLogo:
+                Card.WideLogoImage = dataUri;
+                break;
+            case GoogleImageSlot.ImageModule:
+                Card.ImageModuleImage = dataUri;
+                break;
         }
+
         ScheduleEmit();
         Notify();
     }
 
     public void AddField(FieldGroup group)
     {
-        GetFieldList(group).Add(new PassField { Key = $"field{Guid.NewGuid():N}"[..12] });
+        var list = GetFieldList(group);
+        var max = group switch
+        {
+            FieldGroup.Header => 1,
+            FieldGroup.Primary => 2,
+            _ => int.MaxValue
+        };
+        if (list.Count >= max) return;
+
+        list.Add(new PassField { Key = $"field{Guid.NewGuid():N}"[..12] });
         ScheduleEmit();
         Notify();
     }
@@ -167,127 +183,8 @@ public class BlazeCardStateService : IBlazeCardStateService
 
     public void ApplyPreset(string presetId)
     {
-        if (string.Equals(presetId, "hbf-member", StringComparison.OrdinalIgnoreCase))
-            HbfMemberPreset.Apply(Card);
-        ScheduleEmit();
-        Notify();
-    }
-
-    public void ProjectVisualFromCard()
-    {
-        _visualComponents.Clear();
-        var order = 0;
-
-        void AddFields(IEnumerable<PassField> fields, ToolboxItemType type, DropZoneId zone)
-        {
-            foreach (var f in fields)
-            {
-                _visualComponents.Add(new VisualComponent
-                {
-                    Type = type,
-                    Zone = zone,
-                    Field = f,
-                    Order = order++
-                });
-            }
-        }
-
-        AddFields(Card.HeaderFields, ToolboxItemType.HeaderField, DropZoneId.Header);
-        AddFields(Card.PrimaryFields, ToolboxItemType.PrimaryField, DropZoneId.Primary);
-        AddFields(Card.SecondaryFields, ToolboxItemType.SecondaryField, DropZoneId.Secondary);
-        AddFields(Card.AuxiliaryFields, ToolboxItemType.AuxiliaryField, DropZoneId.Auxiliary);
-        AddFields(Card.BackFields, ToolboxItemType.BackField, DropZoneId.Back);
-
-        if (!string.IsNullOrEmpty(Card.LogoImage))
-            _visualComponents.Add(new VisualComponent { Type = ToolboxItemType.LogoImage, Zone = DropZoneId.Logo, Order = order++ });
-        if (!string.IsNullOrEmpty(Card.StripImage))
-            _visualComponents.Add(new VisualComponent { Type = ToolboxItemType.StripImage, Zone = DropZoneId.Strip, Order = order++ });
-        if (Card.BarcodeFormat != BarcodeFormat.None)
-            _visualComponents.Add(new VisualComponent { Type = ToolboxItemType.Barcode, Zone = DropZoneId.Barcode, Order = order++ });
-    }
-
-    public void AddVisualComponent(VisualComponent component)
-    {
-        switch (component.Type)
-        {
-            case ToolboxItemType.HeaderField:
-                EnsureFieldCapacity(Card.HeaderFields, 1);
-                var hf = component.Field ?? new PassField { Key = "header" };
-                Card.HeaderFields.Add(hf);
-                component.Field = hf;
-                component.Zone = DropZoneId.Header;
-                break;
-            case ToolboxItemType.PrimaryField:
-                EnsureFieldCapacity(Card.PrimaryFields, 2);
-                var pf = component.Field ?? new PassField { Key = "primary" };
-                Card.PrimaryFields.Add(pf);
-                component.Field = pf;
-                component.Zone = DropZoneId.Primary;
-                break;
-            case ToolboxItemType.SecondaryField:
-                var sf = component.Field ?? new PassField { Key = "secondary" };
-                Card.SecondaryFields.Add(sf);
-                component.Field = sf;
-                component.Zone = DropZoneId.Secondary;
-                break;
-            case ToolboxItemType.AuxiliaryField:
-                var af = component.Field ?? new PassField { Key = "auxiliary" };
-                Card.AuxiliaryFields.Add(af);
-                component.Field = af;
-                component.Zone = DropZoneId.Auxiliary;
-                break;
-            case ToolboxItemType.BackField:
-                var bf = component.Field ?? new PassField { Key = "back" };
-                Card.BackFields.Add(bf);
-                component.Field = bf;
-                component.Zone = DropZoneId.Back;
-                break;
-            case ToolboxItemType.Barcode:
-                if (Card.BarcodeFormat == BarcodeFormat.None)
-                    Card.BarcodeFormat = BarcodeFormat.QR;
-                component.Zone = DropZoneId.Barcode;
-                break;
-            case ToolboxItemType.LogoImage:
-                component.Zone = DropZoneId.Logo;
-                break;
-            case ToolboxItemType.StripImage:
-                component.Zone = DropZoneId.Strip;
-                break;
-        }
-
-        component.Order = _visualComponents.Count;
-        _visualComponents.Add(component);
-        ScheduleEmit();
-        Notify();
-    }
-
-    public void RemoveVisualComponent(Guid id)
-    {
-        var component = _visualComponents.FirstOrDefault(c => c.Id == id);
-        if (component is null) return;
-
-        if (component.Field is not null)
-        {
-            Card.HeaderFields.RemoveAll(f => f.Id == component.Field.Id);
-            Card.PrimaryFields.RemoveAll(f => f.Id == component.Field.Id);
-            Card.SecondaryFields.RemoveAll(f => f.Id == component.Field.Id);
-            Card.AuxiliaryFields.RemoveAll(f => f.Id == component.Field.Id);
-            Card.BackFields.RemoveAll(f => f.Id == component.Field.Id);
-        }
-
-        if (component.Type == ToolboxItemType.Barcode)
-            Card.BarcodeFormat = BarcodeFormat.None;
-
-        _visualComponents.Remove(component);
-        ScheduleEmit();
-        Notify();
-    }
-
-    public void UpdateVisualComponent(Guid id, Action<VisualComponent> mutate)
-    {
-        var component = _visualComponents.FirstOrDefault(c => c.Id == id);
-        if (component is null) return;
-        mutate(component);
+        if (string.Equals(presetId, "sample-member", StringComparison.OrdinalIgnoreCase))
+            SampleMemberPreset.Apply(Card);
         ScheduleEmit();
         Notify();
     }
@@ -395,13 +292,6 @@ public class BlazeCardStateService : IBlazeCardStateService
         FieldGroup.Back => Card.BackFields,
         _ => Card.SecondaryFields
     };
-
-    private static void EnsureFieldCapacity(List<PassField> list, int max)
-    {
-        while (list.Count >= max && list.Count > 0)
-            list.RemoveAt(list.Count - 1);
-    }
-
 
     internal static List<string> Validate(CardModel card)
     {

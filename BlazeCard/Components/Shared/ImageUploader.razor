@@ -1,41 +1,81 @@
 @using Microsoft.Extensions.Options
+@using Passbook.Generator
 @inject IBlazeCardStateService State
 @inject ISnackbar Snackbar
 @inject IOptions<BlazeCardOptions> Options
 
-
-<div class="mb-3">
-    <MudText Typo="Typo.caption">@Label (@RecommendedWidth×@RecommendedHeight at 2x)</MudText>
-    <InputFile OnChange="OnFile" accept="image/png,image/jpeg,image/webp" />
+<div class="image-drop @(IsOver ? "image-drop--over" : null)"
+     @ondragenter="OnDragEnter"
+     @ondragleave="OnDragLeave"
+     @ondragover:preventDefault
+     @ondragover="OnDragOver"
+     @ondrop:preventDefault
+     @ondrop="OnDropHighlight">
+    <MudText Typo="Typo.caption" Class="mb-1">
+        @Label
+        @if (RecommendedWidth > 0)
+        {
+            <span> — @RecommendedWidth×@RecommendedHeight px (@ScaleLabel)</span>
+        }
+    </MudText>
+    <MudText Typo="Typo.caption" Class="mud-text-secondary mb-2">Drag &amp; drop PNG/JPEG/WebP, or browse</MudText>
+    <div class="image-drop__file-wrap">
+        <InputFile OnChange="OnFile" accept="image/png,image/jpeg,image/webp" class="image-drop__input" />
+    </div>
     @if (!string.IsNullOrEmpty(Current))
     {
-        <div class="d-flex align-center gap-2 mt-1">
-            <img src="@Current" alt="@Label" style="max-height:40px;max-width:120px" />
-            <MudButton Size="Size.Small" OnClick="Clear">Clear</MudButton>
+        <div class="d-flex align-center gap-2 mt-2">
+            <img src="@Current" alt="@Label" class="image-drop__thumb" />
+            <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="Clear">Clear</MudButton>
         </div>
     }
 </div>
 
 @code {
-    [Parameter] public ImageSlot Slot { get; set; }
+    [Parameter] public PassbookImage? PassbookSlot { get; set; }
+    [Parameter] public GoogleImageSlot? GoogleSlot { get; set; }
     [Parameter] public string Label { get; set; } = "Image";
+    [Parameter] public string ScaleLabel { get; set; } = "";
     [Parameter] public int RecommendedWidth { get; set; }
     [Parameter] public int RecommendedHeight { get; set; }
 
-    private string? Current => Slot switch
+    private bool IsOver { get; set; }
+    private int _dragDepth;
+
+    private string? Current
     {
-        ImageSlot.Logo => State.Card.LogoImage,
-        ImageSlot.Icon => State.Card.IconImage,
-        ImageSlot.Strip => State.Card.StripImage,
-        ImageSlot.Hero => State.Card.HeroImage,
-        ImageSlot.Thumbnail => State.Card.ThumbnailImage,
+        get
+        {
+            if (GoogleSlot is GoogleImageSlot g)
+                return GetGoogle(g);
+            if (PassbookSlot is PassbookImage slot)
+                return State.Card.PassbookImages.TryGetValue(slot, out var uri) ? uri : null;
+            return null;
+        }
+    }
+
+    private string? GetGoogle(GoogleImageSlot slot) => slot switch
+    {
+        GoogleImageSlot.Hero => State.Card.HeroImage,
+        GoogleImageSlot.WideLogo => State.Card.WideLogoImage,
+        GoogleImageSlot.ImageModule => State.Card.ImageModuleImage,
         _ => null
     };
+
+    private void OnDragEnter() { _dragDepth++; IsOver = true; }
+    private void OnDragLeave() { _dragDepth = Math.Max(0, _dragDepth - 1); if (_dragDepth == 0) IsOver = false; }
+    private void OnDragOver() => IsOver = true;
+    private void OnDropHighlight() { _dragDepth = 0; IsOver = false; }
 
     private async Task OnFile(InputFileChangeEventArgs e)
     {
         var file = e.File;
         if (file is null) return;
+        await ApplyFileAsync(file);
+    }
+
+    private async Task ApplyFileAsync(IBrowserFile file)
+    {
         if (file.Size > Options.Value.MaxImageSizeBytes)
         {
             Snackbar.Add("Image exceeds 5 MB limit.", Severity.Error);
@@ -47,8 +87,19 @@
         await stream.CopyToAsync(ms);
         var b64 = Convert.ToBase64String(ms.ToArray());
         var mime = file.ContentType is { Length: > 0 } ct ? ct : "image/png";
-        State.SetImage(Slot, $"data:{mime};base64,{b64}");
+        var dataUri = $"data:{mime};base64,{b64}";
+
+        if (GoogleSlot is GoogleImageSlot g)
+            State.SetGoogleImage(g, dataUri);
+        else if (PassbookSlot is PassbookImage slot)
+            State.SetPassbookImage(slot, dataUri);
     }
 
-    private void Clear() => State.SetImage(Slot, null);
+    private void Clear()
+    {
+        if (GoogleSlot is GoogleImageSlot g)
+            State.SetGoogleImage(g, null);
+        else if (PassbookSlot is PassbookImage slot)
+            State.SetPassbookImage(slot, null);
+    }
 }

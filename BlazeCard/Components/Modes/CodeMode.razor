@@ -3,7 +3,6 @@
 @inject IJSRuntime Js
 @inject ISnackbar Snackbar
 
-<MudText Typo="Typo.h5" Class="mb-2">Code Mode</MudText>
 @if (State.HasCodeSyncWarning)
 {
     <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-2">@State.CodeSyncWarningMessage</MudAlert>
@@ -14,7 +13,7 @@
         <div class="d-flex align-center justify-space-between mb-1">
             <MudText Typo="Typo.subtitle1">Apple (dotnet-passbook)</MudText>
             <div>
-                <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="RegenerateApple">Regenerate Apple</MudButton>
+                <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="RegenerateApple">Regenerate</MudButton>
                 <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="CopyApple">Copy</MudButton>
             </div>
         </div>
@@ -25,7 +24,7 @@
         <div class="d-flex align-center justify-space-between mb-1">
             <MudText Typo="Typo.subtitle1">Google Wallet JSON</MudText>
             <div>
-                <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="RegenerateGoogle">Regenerate Google</MudButton>
+                <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="RegenerateGoogle">Regenerate</MudButton>
                 <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="CopyGoogle">Copy</MudButton>
             </div>
         </div>
@@ -78,8 +77,6 @@
         await State.ApplyGoogleCodeEditAsync(_googleText);
         _googleDirty = false;
     }
-
-
 
     private async Task CopyApple()
     {

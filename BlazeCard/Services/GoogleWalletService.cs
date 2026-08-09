@@ -41,10 +41,23 @@ public class GoogleWalletService : IGoogleWalletService
         if (modules.Count > 0)
             dto.TextModulesData = modules;
 
-        if (!string.IsNullOrEmpty(model.LogoImage))
+        if (model.GetPassbookPreview(Passbook.Generator.PassbookImage.Logo3X, Passbook.Generator.PassbookImage.Logo2X, Passbook.Generator.PassbookImage.Logo) is not null)
             dto.Logo = PlaceholderImage("https://example.com/images/logo.png");
+        if (!string.IsNullOrEmpty(model.WideLogoImage))
+            dto.WideLogo = PlaceholderImage("https://example.com/images/wide-logo.png");
         if (!string.IsNullOrEmpty(model.HeroImage))
             dto.HeroImage = PlaceholderImage("https://example.com/images/hero.png");
+        if (!string.IsNullOrEmpty(model.ImageModuleImage))
+        {
+            dto.ImageModulesData =
+            [
+                new ImageModuleDataDto
+                {
+                    Id = "IMAGE_MODULE_ID",
+                    MainImage = PlaceholderImage("https://example.com/images/module.png")
+                }
+            ];
+        }
 
         if (model.BarcodeFormat != BarcodeFormat.None)
         {

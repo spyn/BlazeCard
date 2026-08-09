@@ -1,10 +1,21 @@
+@using Passbook.Generator
+
 @if (Card is null) { return; }
+
+@{
+    var logo = Card.GetPassbookPreview(PassbookImage.Logo3X, PassbookImage.Logo2X, PassbookImage.Logo);
+    var useWide = !string.IsNullOrEmpty(Card.WideLogoImage);
+}
 
 <div class="google-card" style="background-color: @Card.BackgroundColor; color: @Card.ForegroundColor">
     <div class="google-card__top-bar">
-        @if (!string.IsNullOrEmpty(Card.LogoImage))
+        @if (useWide)
         {
-            <img class="google-card__logo" src="@Card.LogoImage" alt="logo" />
+            <img class="google-card__wide-logo" src="@Card.WideLogoImage" alt="wide logo" />
+        }
+        else if (!string.IsNullOrEmpty(logo))
+        {
+            <img class="google-card__logo" src="@logo" alt="logo" />
         }
         <span class="google-card__org-name">@Card.OrganizationName</span>
     </div>
@@ -32,6 +43,13 @@
         <div class="google-card__row">
             <span class="google-card__row-label">@f.Label</span>
             <span>@f.Value</span>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Card.ImageModuleImage))
+    {
+        <div class="google-card__module">
+            <img class="google-card__module-img" src="@Card.ImageModuleImage" alt="image module" />
         </div>
     }
 

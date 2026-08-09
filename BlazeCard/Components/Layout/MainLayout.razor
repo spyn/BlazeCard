@@ -7,12 +7,24 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<div class="bc-root" data-skin="@State.Skin.ToString().ToLowerInvariant()" data-appearance="@State.Appearance.ToString().ToLowerInvariant()">
-    <MudAppBar Elevation="1" Color="Color.Primary" Dense="true">
-        <MudText Typo="Typo.h6" Class="ml-2">BlazeCard</MudText>
-        <MudChip T="string" Size="Size.Small" Class="ml-3" Variant="Variant.Outlined" Color="Color.Surface">Preview Only</MudChip>
-        <MudSpacer />
-    </MudAppBar>
+<div class="bc-root" data-appearance="@State.Appearance.ToString().ToLowerInvariant()">
+    <header class="bc-topbar">
+        <div class="bc-brand">
+            <span class="bc-brand__mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
+                    <path d="M16 4l2.2 6.4H25l-5.3 3.9 2 6.4L16 17.6l-5.7 3.1 2-6.4L7 10.4h6.8L16 4z" fill="currentColor" opacity=".25"/>
+                    <path d="M10 22c2.5-6 5-9.5 6-14 1 4.5 3.5 8 6 14-4-1.2-8-1.2-12 0z" fill="currentColor"/>
+                    <path d="M14 22h4l1 5h-6l1-5z" fill="currentColor"/>
+                </svg>
+            </span>
+            <span class="bc-brand__name">BlazeCard</span>
+        </div>
+        <div class="bc-topbar__actions">
+            <SkinAppearanceControls Compact="true" />
+            <button type="button" class="bc-icon-btn" title="Help" aria-label="Help">?</button>
+            <span class="bc-avatar" title="Preview only" aria-hidden="true">BC</span>
+        </div>
+    </header>
     <main class="bc-main">
         @Body
     </main>
@@ -23,19 +35,25 @@
     {
         PaletteLight = new PaletteLight
         {
-            Primary = "#0D7377",
-            Secondary = "#14919B",
-            AppbarBackground = "#0D7377",
-            Background = "#F7FAFA",
-            Surface = "#FFFFFF"
+            Primary = "#E85A1C",
+            Secondary = "#0D7377",
+            AppbarBackground = "#FFFCF8",
+            Background = "#F4F1EC",
+            Surface = "#FFFFFF",
+            TextPrimary = "#2C241C",
+            TextSecondary = "#6F655C",
+            DrawerBackground = "#FFFCF8",
+            ActionDefault = "#6F655C"
         },
         PaletteDark = new PaletteDark
         {
-            Primary = "#14919B",
-            Secondary = "#0D7377",
-            AppbarBackground = "#0A4F52",
-            Background = "#121A1A",
-            Surface = "#1A2424"
+            Primary = "#FF6A33",
+            Secondary = "#14919B",
+            AppbarBackground = "#1A1612",
+            Background = "#14110E",
+            Surface = "#1E1A16",
+            TextPrimary = "#F5F0EA",
+            TextSecondary = "#A89F94"
         }
     };
 

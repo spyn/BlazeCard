@@ -1,5 +1,6 @@
 using BlazeCard.Models;
 using FluentAssertions;
+using Passbook.Generator;
 
 namespace BlazeCard.Tests;
 
@@ -14,7 +15,7 @@ public class SnippetShapeTests
             c.Description = "Pass";
             c.OrganizationName = "Org";
             c.BarcodeFormat = BarcodeFormat.None;
-            c.LogoImage = "data:image/png;base64,iVBORw0KGgo=";
+            c.SetPassbookImage(PassbookImage.Logo2X, "data:image/png;base64,iVBORw0KGgo=");
             c.HeroImage = "data:image/png;base64,AAAA";
         });
 
@@ -33,7 +34,8 @@ public class SnippetShapeTests
             c.Description = "Pass";
             c.OrganizationName = "Org";
             c.BarcodeFormat = BarcodeFormat.None;
-            c.LogoImage = "data:image/png;base64,AAAA";
+            c.SetPassbookImage(PassbookImage.Logo2X, "data:image/png;base64,AAAA");
+            c.SetPassbookImage(PassbookImage.Icon2X, "data:image/png;base64,BBBB");
         });
 
         var apple = state.AppleCodeSnippet;
@@ -44,7 +46,9 @@ public class SnippetShapeTests
         apple.Should().Contain("File.WriteAllBytes");
         apple.Should().Contain("X509Certificate");
         apple.Should().Contain("File.ReadAllBytes");
-        apple.Should().Contain("path/to/logo");
+        apple.Should().Contain("PassbookImage.Logo2X");
+        apple.Should().Contain("logo@2x.png");
+        apple.Should().Contain("PassbookImage.Icon2X");
         apple.Should().Contain("using Passbook.Generator");
     }
 }

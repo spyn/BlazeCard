@@ -5,23 +5,48 @@
 @inject ISnackbar Snackbar
 
 <div class="blaze-shell">
-    <aside class="blaze-shell__sidebar">
-        <WorkspaceSidebar OnSessionExport="ExportSession" OnSessionImport="ImportSession" />
-    </aside>
     <section class="blaze-shell__editor">
-        @switch (State.CurrentMode)
-        {
-            case AppMode.Form:
-                <FormMode />
-                break;
-            case AppMode.Code:
+        <div class="editor-toolbar">
+            <nav class="editor-tabs" aria-label="Editor mode">
+                <button type="button"
+                        class="editor-tab @(State.CurrentMode == AppMode.Form ? "editor-tab--active" : null)"
+                        @onclick="@(() => State.SetMode(AppMode.Form))">Visual</button>
+                <button type="button"
+                        class="editor-tab @(State.CurrentMode == AppMode.Code ? "editor-tab--active" : null)"
+                        @onclick="@(() => State.SetMode(AppMode.Code))">Code</button>
+            </nav>
+            <button type="button" class="editor-revert" @onclick="RevertAsync" title="Reload saved session">
+                <MudIcon Icon="@Icons.Material.Outlined.Replay" Size="Size.Small" />
+                Revert Changes
+            </button>
+        </div>
+
+        <div class="editor-body">
+            @if (State.CurrentMode == AppMode.Code)
+            {
                 <CodeMode />
-                break;
-            case AppMode.Visual:
-                <VisualMode />
-                break;
+            }
+            else
+            {
+                <FormMode ShowFooterActions="false" />
+            }
+        </div>
+
+        @if (State.CurrentMode == AppMode.Form)
+        {
+            <div class="editor-footer">
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" Class="editor-footer__preset"
+                           OnClick="@(() => State.ApplyPreset("sample-member"))">
+                    Apply Sample Preset
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="editor-footer__build"
+                           OnClick="BuildAsync">
+                    Build
+                </MudButton>
+            </div>
         }
     </section>
+
     <aside class="blaze-shell__preview">
         <PreviewPanel />
     </aside>
@@ -30,7 +55,12 @@
 @code {
     private bool _restored;
 
-    protected override void OnInitialized() => State.OnStateChanged += StateHasChanged;
+    protected override void OnInitialized()
+    {
+        if (State.PreviewFocus == PreviewFocus.Dual)
+            State.SetPreviewFocus(PreviewFocus.Apple);
+        State.OnStateChanged += StateHasChanged;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -40,29 +70,7 @@
         {
             var loaded = await SessionRestore.TryLoadAsync();
             if (loaded is { Card: not null } value)
-            {
-                State.UpdateCard(c =>
-                {
-                    c.Description = value.Card!.Description;
-                    c.OrganizationName = value.Card.OrganizationName;
-                    c.LogoText = value.Card.LogoText;
-                    c.BackgroundColor = value.Card.BackgroundColor;
-                    c.LabelColor = value.Card.LabelColor;
-                    c.ForegroundColor = value.Card.ForegroundColor;
-                    c.HeaderFields = value.Card.HeaderFields;
-                    c.PrimaryFields = value.Card.PrimaryFields;
-                    c.SecondaryFields = value.Card.SecondaryFields;
-                    c.AuxiliaryFields = value.Card.AuxiliaryFields;
-                    c.BackFields = value.Card.BackFields;
-                    c.BarcodeFormat = value.Card.BarcodeFormat;
-                    c.BarcodeMessage = value.Card.BarcodeMessage;
-                    c.BarcodeAltText = value.Card.BarcodeAltText;
-                    c.DefaultLanguage = value.Card.DefaultLanguage;
-                    c.PassType = value.Card.PassType;
-                });
-                State.SetSkin(value.Skin);
-                State.SetAppearance(value.Appearance);
-            }
+                ApplyLoaded(value.Card!, value.Skin, value.Appearance);
         }
         catch
         {
@@ -70,25 +78,10 @@
         }
     }
 
-    private async Task ExportSession()
+    private void ApplyLoaded(CardModel src, Skin skin, AppearanceMode appearance)
     {
-        var json = SessionRestore.ExportJson(State.Card, includeImages: false);
-        await SessionRestore.SaveAsync(State.Card, State.Skin, State.Appearance);
-        Snackbar.Add("Session saved (without images).", Severity.Success);
-        _ = json;
-    }
-
-    private async Task ImportSession()
-    {
-        var loaded = await SessionRestore.TryLoadAsync();
-        if (loaded?.Card is null)
-        {
-            Snackbar.Add("No saved session found.", Severity.Warning);
-            return;
-        }
         State.UpdateCard(c =>
         {
-            var src = loaded.Value.Card!;
             c.Description = src.Description;
             c.OrganizationName = src.OrganizationName;
             c.LogoText = src.LogoText;
@@ -104,10 +97,33 @@
             c.BarcodeMessage = src.BarcodeMessage;
             c.BarcodeAltText = src.BarcodeAltText;
             c.DefaultLanguage = src.DefaultLanguage;
+            c.PassType = src.PassType;
         });
-        State.SetSkin(loaded.Value.Skin);
-        State.SetAppearance(loaded.Value.Appearance);
-        Snackbar.Add("Session restored.", Severity.Success);
+        State.SetSkin(skin);
+        State.SetAppearance(appearance);
+    }
+
+    private async Task RevertAsync()
+    {
+        var loaded = await SessionRestore.TryLoadAsync();
+        if (loaded?.Card is null)
+        {
+            Snackbar.Add("No saved session to revert to.", Severity.Warning);
+            return;
+        }
+        ApplyLoaded(loaded.Value.Card!, loaded.Value.Skin, loaded.Value.Appearance);
+        Snackbar.Add("Reverted to saved session.", Severity.Info);
+    }
+
+    private async Task BuildAsync()
+    {
+        await SessionRestore.SaveAsync(State.Card, State.Skin, State.Appearance);
+        var result = await State.BuildAsync();
+        if (result.Success)
+            Snackbar.Add("Build OK — snippets re-synced.", Severity.Success);
+        else
+            foreach (var err in result.ValidationErrors)
+                Snackbar.Add(err, Severity.Error);
     }
 
     public void Dispose() => State.OnStateChanged -= StateHasChanged;

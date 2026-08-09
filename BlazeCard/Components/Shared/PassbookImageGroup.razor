@@ -1,0 +1,25 @@
+@using Passbook.Generator
+@implements IDisposable
+@inject IBlazeCardStateService State
+
+<div class="passbook-image-group mb-4">
+    <MudText Typo="Typo.subtitle2">@Group.Name</MudText>
+    <MudText Typo="Typo.caption" Class="mud-text-secondary mb-2">@Group.Hint</MudText>
+    <div class="passbook-image-group__slots">
+        @foreach (var slot in Group.Slots)
+        {
+            <ImageUploader PassbookSlot="slot.Image"
+                           Label="@($"{Group.Name} {slot.ScaleLabel}")"
+                           ScaleLabel="@slot.ScaleLabel"
+                           RecommendedWidth="slot.Width"
+                           RecommendedHeight="slot.Height" />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public PassbookImageCatalog.Group Group { get; set; } = default!;
+
+    protected override void OnInitialized() => State.OnStateChanged += StateHasChanged;
+    public void Dispose() => State.OnStateChanged -= StateHasChanged;
+}

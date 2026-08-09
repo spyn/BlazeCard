@@ -1,10 +1,18 @@
 using BlazeCard;
 using BlazeCard.Components;
 using BlazeCard.Services;
+using Microsoft.AspNetCore.DataProtection;
 using MudBlazor;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var keysPath = builder.Configuration["DataProtection:KeysPath"]
+    ?? Path.Combine(builder.Environment.ContentRootPath, "dp-keys");
+Directory.CreateDirectory(keysPath);
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
+    .SetApplicationName("BlazeCard");
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

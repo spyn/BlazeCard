@@ -1,6 +1,13 @@
-<div class="mb-2">
-    <MudTextField T="string" Label="@Label" Value="@Value" ValueChanged="OnChanged" Immediate="true"
-                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Palette" />
+<div class="colour-picker">
+    <span class="colour-picker__label">@Label</span>
+    <div class="colour-picker__row">
+        <label class="colour-picker__swatch-wrap" title="@Value">
+            <span class="colour-picker__swatch" style="background:@Value"></span>
+            <input type="color" class="colour-picker__native" value="@NormalizedHex" @oninput="OnNative" />
+        </label>
+        <MudTextField T="string" Value="@Value" ValueChanged="OnChanged" Immediate="true"
+                      Variant="Variant.Outlined" Margin="Margin.Dense" Class="colour-picker__hex" />
+    </div>
 </div>
 
 @code {
@@ -8,5 +15,15 @@
     [Parameter] public string Value { get; set; } = "#000000";
     [Parameter] public EventCallback<string> ValueChanged { get; set; }
 
+    private string NormalizedHex =>
+        string.IsNullOrWhiteSpace(Value) || Value.Length < 7 ? "#000000" : Value[..7];
+
     private async Task OnChanged(string v) => await ValueChanged.InvokeAsync(v ?? "#000000");
+
+    private async Task OnNative(ChangeEventArgs e)
+    {
+        var v = e.Value?.ToString();
+        if (!string.IsNullOrWhiteSpace(v))
+            await ValueChanged.InvokeAsync(v);
+    }
 }

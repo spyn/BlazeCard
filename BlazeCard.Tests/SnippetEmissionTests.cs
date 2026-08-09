@@ -12,8 +12,8 @@ public class SnippetEmissionTests
 
         state.UpdateCard(c =>
         {
-            c.Description = "HBF Member Pass";
-            c.OrganizationName = "HBF Health";
+            c.Description = "BlazeCard Pass";
+            c.OrganizationName = "Blaze Inc.";
             c.BarcodeFormat = BarcodeFormat.None;
             c.PrimaryFields.Add(new PassField
             {
@@ -26,12 +26,12 @@ public class SnippetEmissionTests
         var result = await state.BuildAsync();
 
         result.Success.Should().BeTrue();
-        state.AppleCodeSnippet.Should().Contain("HBF Member Pass");
-        state.AppleCodeSnippet.Should().Contain("HBF Health");
+        state.AppleCodeSnippet.Should().Contain("BlazeCard Pass");
+        state.AppleCodeSnippet.Should().Contain("Blaze Inc.");
         state.AppleCodeSnippet.Should().Contain("memberName");
         state.AppleCodeSnippet.Should().Contain("Alex Taylor");
 
-        state.GoogleCodeSnippet.Should().Contain("HBF Health");
+        state.GoogleCodeSnippet.Should().Contain("Blaze Inc.");
         state.GoogleCodeSnippet.Should().Contain("Alex Taylor");
         state.GoogleCodeSnippet.Should().Contain("Member Name");
     }

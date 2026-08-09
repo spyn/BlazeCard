@@ -1,6 +1,6 @@
 namespace BlazeCard.Models;
 
-public enum AppMode { Form, Code, Visual }
+public enum AppMode { Form, Code }
 
 public enum PassType
 {
@@ -19,13 +19,12 @@ public enum BarcodeFormat
 
 public enum TextAlignment { Left, Center, Right, Natural }
 
-public enum ImageSlot
+/// <summary>Google Wallet image slots (HTTPS in snippets; data URIs in preview).</summary>
+public enum GoogleImageSlot
 {
-    Logo,
-    Icon,
-    Strip,
     Hero,
-    Thumbnail
+    WideLogo,
+    ImageModule
 }
 
 public enum FieldGroup
@@ -35,7 +34,6 @@ public enum FieldGroup
 
 public enum Skin
 {
-    Hbf,
     Blaze
 }
 
@@ -50,34 +48,4 @@ public enum PreviewFocus
     Dual,
     Apple,
     Google
-}
-
-public enum ToolboxItemType
-{
-    HeaderField,
-    PrimaryField,
-    SecondaryField,
-    AuxiliaryField,
-    BackField,
-    LogoImage,
-    StripImage,
-    IconImage,
-    HeroImage,
-    ThumbnailImage,
-    Barcode,
-    BackgroundColor,
-    LabelColor,
-    ForegroundColor
-}
-
-public enum DropZoneId
-{
-    Header,
-    Primary,
-    Secondary,
-    Auxiliary,
-    Back,
-    Strip,
-    Logo,
-    Barcode
 }

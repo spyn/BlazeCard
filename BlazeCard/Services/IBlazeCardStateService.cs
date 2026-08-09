@@ -27,7 +27,8 @@ public interface IBlazeCardStateService
     Task<string> RegenerateGoogleCodeAsync();
 
     void UpdateCard(Action<CardModel> mutate);
-    void SetImage(ImageSlot slot, string? base64DataUri);
+    void SetPassbookImage(Passbook.Generator.PassbookImage image, string? dataUri);
+    void SetGoogleImage(GoogleImageSlot slot, string? dataUri);
 
     void AddField(FieldGroup group);
     void RemoveField(FieldGroup group, Guid fieldId);
@@ -35,12 +36,6 @@ public interface IBlazeCardStateService
     void ReorderFields(FieldGroup group, List<Guid> orderedIds);
 
     void ApplyPreset(string presetId);
-
-    IReadOnlyList<VisualComponent> VisualComponents { get; }
-    void ProjectVisualFromCard();
-    void AddVisualComponent(VisualComponent component);
-    void RemoveVisualComponent(Guid id);
-    void UpdateVisualComponent(Guid id, Action<VisualComponent> mutate);
 
     Task ApplyAppleCodeEditAsync(string code);
     Task ApplyGoogleCodeEditAsync(string code);

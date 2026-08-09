@@ -2,57 +2,76 @@
 @inject IBlazeCardStateService State
 @inject ISnackbar Snackbar
 
-<MudText Typo="Typo.h5" Class="mb-3">Form Mode</MudText>
+<div class="form-mode">
+    <MudExpansionPanels MultiExpansion="true" Class="bc-accordions" Elevation="0">
+        <MudExpansionPanel Text="Pass Details" Expanded="true" Gutters="true">
+            <div class="form-grid form-grid--2">
+                <MudSelect T="string" Label="Pass Type" Value="@PassTypeLabel" Disabled="true" Variant="Variant.Outlined" Margin="Margin.Dense">
+                    <MudSelectItem Value="@PassTypeLabel">Generic</MudSelectItem>
+                </MudSelect>
+                <MudTextField T="string" Label="Language" Value="@State.Card.DefaultLanguage"
+                              ValueChanged="OnLang" Immediate="true" Variant="Variant.Outlined" Margin="Margin.Dense" />
+            </div>
+            <MudTextField T="string" Label="Description" Value="@State.Card.Description"
+                          ValueChanged="OnDescription" Immediate="true" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mt-3" />
+            <MudTextField T="string" Label="Organization Name" Value="@State.Card.OrganizationName"
+                          ValueChanged="OnOrg" Immediate="true" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mt-3" />
+            <MudTextField T="string" Label="Logo Text" Value="@State.Card.LogoText"
+                          ValueChanged="OnLogoText" Immediate="true" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mt-3" />
+        </MudExpansionPanel>
 
-<MudExpansionPanels MultiExpansion="true">
-    <MudExpansionPanel Text="Pass Details" Expanded="true">
-        <MudTextField T="string" Label="Pass Type" Value="@PassTypeLabel" Disabled="true" Class="mb-2" />
-        <MudTextField T="string" Label="Description" Value="@State.Card.Description"
-                      ValueChanged="OnDescription" Immediate="true" Class="mb-2" />
-        <MudTextField T="string" Label="Organisation Name" Value="@State.Card.OrganizationName"
-                      ValueChanged="OnOrg" Immediate="true" Class="mb-2" />
-        <MudTextField T="string" Label="Logo Text" Value="@State.Card.LogoText"
-                      ValueChanged="OnLogoText" Immediate="true" Class="mb-2" />
-        <MudTextField T="string" Label="Default Language" Value="@State.Card.DefaultLanguage"
-                      ValueChanged="OnLang" Immediate="true" />
-    </MudExpansionPanel>
+        <MudExpansionPanel Text="Appearance" Expanded="true">
+            <ColourPicker Label="Background" Value="@State.Card.BackgroundColor" ValueChanged="OnBg" />
+            <ColourPicker Label="Label" Value="@State.Card.LabelColor" ValueChanged="OnLabel" />
+            <ColourPicker Label="Foreground" Value="@State.Card.ForegroundColor" ValueChanged="OnFg" />
+        </MudExpansionPanel>
 
-    <MudExpansionPanel Text="Appearance">
-        <ColourPicker Label="Background" Value="@State.Card.BackgroundColor"
-                      ValueChanged="OnBg" />
-        <ColourPicker Label="Label" Value="@State.Card.LabelColor"
-                      ValueChanged="OnLabel" />
-        <ColourPicker Label="Foreground" Value="@State.Card.ForegroundColor"
-                      ValueChanged="OnFg" />
-    </MudExpansionPanel>
+        <MudExpansionPanel Text="Apple Passbook Images">
+            <MudText Typo="Typo.caption" Class="mud-text-secondary mb-3">
+                Drag images into each slot. Maps to <code>PassbookImage</code> /
+                <code>request.Images.Add(...)</code> in the Apple snippet.
+            </MudText>
+            @foreach (var group in PassbookImageCatalog.AppleGroups)
+            {
+                <PassbookImageGroup Group="group" />
+            }
+        </MudExpansionPanel>
 
-    <MudExpansionPanel Text="Images">
-        <ImageUploader Slot="ImageSlot.Logo" Label="Logo" RecommendedWidth="160" RecommendedHeight="50" />
-        <ImageUploader Slot="ImageSlot.Icon" Label="Icon" RecommendedWidth="58" RecommendedHeight="58" />
-        <ImageUploader Slot="ImageSlot.Strip" Label="Strip" RecommendedWidth="640" RecommendedHeight="246" />
-        <ImageUploader Slot="ImageSlot.Hero" Label="Hero" RecommendedWidth="1125" RecommendedHeight="432" />
-        <ImageUploader Slot="ImageSlot.Thumbnail" Label="Thumbnail" RecommendedWidth="660" RecommendedHeight="660" />
-    </MudExpansionPanel>
+        <MudExpansionPanel Text="Google Images">
+            <MudText Typo="Typo.caption" Class="mud-text-secondary mb-3">
+                GenericObject image fields. Snippets use HTTPS placeholders; Live Preview uses your uploads.
+                Circular <code>logo</code> is driven by Apple Logo slots above.
+            </MudText>
+            <ImageUploader GoogleSlot="GoogleImageSlot.Hero" Label="Hero" RecommendedWidth="1032" RecommendedHeight="812" ScaleLabel="Google" />
+            <ImageUploader GoogleSlot="GoogleImageSlot.WideLogo" Label="Wide logo" RecommendedWidth="1280" RecommendedHeight="400" ScaleLabel="Google" />
+            <ImageUploader GoogleSlot="GoogleImageSlot.ImageModule" Label="Image module (mainImage)" RecommendedWidth="1860" RecommendedHeight="600" ScaleLabel="Google" />
+        </MudExpansionPanel>
 
-    <MudExpansionPanel Text="Pass Fields" Expanded="true">
-        <FieldList Group="FieldGroup.Header" Title="Header (max 1)" />
-        <FieldList Group="FieldGroup.Primary" Title="Primary (max 2)" />
-        <FieldList Group="FieldGroup.Secondary" Title="Secondary" />
-        <FieldList Group="FieldGroup.Auxiliary" Title="Auxiliary" />
-        <FieldList Group="FieldGroup.Back" Title="Back" />
-    </MudExpansionPanel>
+        <MudExpansionPanel Text="Pass Fields" Expanded="true">
+            <FieldList Group="FieldGroup.Header" Title="Header (max 1)" />
+            <FieldList Group="FieldGroup.Primary" Title="Primary (max 2)" />
+            <FieldList Group="FieldGroup.Secondary" Title="Secondary" />
+            <FieldList Group="FieldGroup.Auxiliary" Title="Auxiliary" />
+            <FieldList Group="FieldGroup.Back" Title="Back" />
+        </MudExpansionPanel>
 
-    <MudExpansionPanel Text="Barcode">
-        <BarcodeConfig />
-    </MudExpansionPanel>
-</MudExpansionPanels>
+        <MudExpansionPanel Text="Barcode">
+            <BarcodeConfig />
+        </MudExpansionPanel>
+    </MudExpansionPanels>
 
-<div class="mt-4 d-flex gap-2">
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="BuildAsync">Build</MudButton>
-    <MudButton Variant="Variant.Outlined" OnClick="ApplyPreset">Apply HBF Member Preset</MudButton>
+    @if (ShowFooterActions)
+    {
+        <div class="mt-4 d-flex gap-2">
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ApplyPreset">Apply Sample Preset</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="BuildAsync">Build</MudButton>
+        </div>
+    }
 </div>
 
 @code {
+    [Parameter] public bool ShowFooterActions { get; set; } = true;
+
     private static string PassTypeLabel => "Generic";
 
     protected override void OnInitialized() => State.OnStateChanged += StateHasChanged;
@@ -65,13 +84,13 @@
     private void OnBg(string v) => State.UpdateCard(c => c.BackgroundColor = v);
     private void OnLabel(string v) => State.UpdateCard(c => c.LabelColor = v);
     private void OnFg(string v) => State.UpdateCard(c => c.ForegroundColor = v);
-    private void ApplyPreset() => State.ApplyPreset("hbf-member");
+    private void ApplyPreset() => State.ApplyPreset("sample-member");
 
     private async Task BuildAsync()
     {
         var result = await State.BuildAsync();
         if (result.Success)
-            Snackbar.Add("Build OK — snippets re-synced. Open Code Mode to copy.", Severity.Success);
+            Snackbar.Add("Build OK — snippets re-synced. Open Code to copy.", Severity.Success);
         else
             foreach (var err in result.ValidationErrors)
                 Snackbar.Add(err, Severity.Error);
