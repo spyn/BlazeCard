@@ -1,0 +1,70 @@
+@if (Card is null) { return; }
+
+<div class="apple-pass apple-pass--generic"
+     style="background-color: @Card.BackgroundColor; color: @Card.ForegroundColor">
+    <div class="apple-pass__header">
+        <div class="apple-pass__logo-area">
+            @if (!string.IsNullOrEmpty(Card.LogoImage))
+            {
+                <img class="apple-pass__logo-img" src="@Card.LogoImage" alt="logo" />
+            }
+            <span class="apple-pass__logo-text">@Card.LogoText</span>
+        </div>
+        @foreach (var f in Card.HeaderFields)
+        {
+            <div class="apple-pass__header-field">
+                <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
+                <div class="apple-pass__field-value">@f.Value</div>
+            </div>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(Card.StripImage))
+    {
+        <div class="apple-pass__strip">
+            <img class="apple-pass__strip-img" src="@Card.StripImage" alt="strip" />
+        </div>
+    }
+
+    <div class="apple-pass__primary-fields">
+        @foreach (var f in Card.PrimaryFields)
+        {
+            <div>
+                <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
+                <div class="apple-pass__field-value apple-pass__field-value--primary">@f.Value</div>
+            </div>
+        }
+    </div>
+
+    <div class="apple-pass__secondary-fields">
+        @foreach (var f in Card.SecondaryFields.Concat(Card.AuxiliaryFields))
+        {
+            <div class="apple-pass__secondary-field">
+                <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
+                <div class="apple-pass__field-value">@f.Value</div>
+            </div>
+        }
+    </div>
+
+    @if (Card.BarcodeFormat != BarcodeFormat.None)
+    {
+        <div class="apple-pass__barcode-area">
+            @if (Card.BarcodeFormat == BarcodeFormat.QR && !string.IsNullOrWhiteSpace(Card.BarcodeMessage))
+            {
+                <QrBarcodeGlyph Message="@Card.BarcodeMessage" />
+            }
+            else
+            {
+                <div class="apple-pass__barcode-placeholder">
+                    <div class="apple-pass__barcode-icon">▮▮▮</div>
+                    <div class="apple-pass__barcode-text">@Card.BarcodeMessage</div>
+                    <div class="apple-pass__barcode-text">Only QR is scannable in preview</div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public CardModel Card { get; set; } = default!;
+}

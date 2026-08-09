@@ -1,0 +1,45 @@
+﻿@inherits LayoutComponentBase
+@implements IDisposable
+@inject IBlazeCardStateService State
+
+<MudThemeProvider Theme="_theme" IsDarkMode="@(State.Appearance == AppearanceMode.Dark)" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<div class="bc-root" data-skin="@State.Skin.ToString().ToLowerInvariant()" data-appearance="@State.Appearance.ToString().ToLowerInvariant()">
+    <MudAppBar Elevation="1" Color="Color.Primary" Dense="true">
+        <MudText Typo="Typo.h6" Class="ml-2">BlazeCard</MudText>
+        <MudChip T="string" Size="Size.Small" Class="ml-3" Variant="Variant.Outlined" Color="Color.Surface">Preview Only</MudChip>
+        <MudSpacer />
+    </MudAppBar>
+    <main class="bc-main">
+        @Body
+    </main>
+</div>
+
+@code {
+    private readonly MudTheme _theme = new()
+    {
+        PaletteLight = new PaletteLight
+        {
+            Primary = "#0D7377",
+            Secondary = "#14919B",
+            AppbarBackground = "#0D7377",
+            Background = "#F7FAFA",
+            Surface = "#FFFFFF"
+        },
+        PaletteDark = new PaletteDark
+        {
+            Primary = "#14919B",
+            Secondary = "#0D7377",
+            AppbarBackground = "#0A4F52",
+            Background = "#121A1A",
+            Surface = "#1A2424"
+        }
+    };
+
+    protected override void OnInitialized() => State.OnStateChanged += StateHasChanged;
+
+    public void Dispose() => State.OnStateChanged -= StateHasChanged;
+}

@@ -1,0 +1,31 @@
+@implements IDisposable
+@inject IBlazeCardStateService State
+
+<div class="mb-4">
+    <div class="d-flex align-center justify-space-between mb-1">
+        <MudText Typo="Typo.subtitle2">@Title</MudText>
+        <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="@(() => State.AddField(Group))">Add</MudButton>
+    </div>
+    @foreach (var field in Fields)
+    {
+        <FieldEditor Group="Group" Field="field" />
+    }
+</div>
+
+@code {
+    [Parameter] public FieldGroup Group { get; set; }
+    [Parameter] public string Title { get; set; } = "Fields";
+
+    private IEnumerable<PassField> Fields => Group switch
+    {
+        FieldGroup.Header => State.Card.HeaderFields,
+        FieldGroup.Primary => State.Card.PrimaryFields,
+        FieldGroup.Secondary => State.Card.SecondaryFields,
+        FieldGroup.Auxiliary => State.Card.AuxiliaryFields,
+        FieldGroup.Back => State.Card.BackFields,
+        _ => []
+    };
+
+    protected override void OnInitialized() => State.OnStateChanged += StateHasChanged;
+    public void Dispose() => State.OnStateChanged -= StateHasChanged;
+}

@@ -1,0 +1,29 @@
+@implements IDisposable
+@inject IBlazeCardStateService State
+
+<div class="preview-panel">
+    <div class="d-flex align-center justify-space-between mb-2">
+        <MudText Typo="Typo.h6">Live Preview</MudText>
+        <MudButtonGroup Size="Size.Small" Variant="Variant.Outlined">
+            <MudButton OnClick="@(() => State.SetPreviewFocus(PreviewFocus.Dual))" Variant="@(State.PreviewFocus == PreviewFocus.Dual ? Variant.Filled : Variant.Outlined)">Dual</MudButton>
+            <MudButton OnClick="@(() => State.SetPreviewFocus(PreviewFocus.Apple))" Variant="@(State.PreviewFocus == PreviewFocus.Apple ? Variant.Filled : Variant.Outlined)">Apple</MudButton>
+            <MudButton OnClick="@(() => State.SetPreviewFocus(PreviewFocus.Google))" Variant="@(State.PreviewFocus == PreviewFocus.Google ? Variant.Filled : Variant.Outlined)">Google</MudButton>
+        </MudButtonGroup>
+    </div>
+
+    @if (State.PreviewFocus is PreviewFocus.Dual or PreviewFocus.Apple)
+    {
+        <MudText Typo="Typo.caption" Class="mb-1">Apple Wallet</MudText>
+        <AppleCardPreview Card="State.Card" />
+    }
+    @if (State.PreviewFocus is PreviewFocus.Dual or PreviewFocus.Google)
+    {
+        <MudText Typo="Typo.caption" Class="mt-4 mb-1">Google Wallet</MudText>
+        <GoogleCardPreview Card="State.Card" />
+    }
+</div>
+
+@code {
+    protected override void OnInitialized() => State.OnStateChanged += StateHasChanged;
+    public void Dispose() => State.OnStateChanged -= StateHasChanged;
+}
