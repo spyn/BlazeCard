@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BlazeCard - Visual Mode</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#006670",
+                      "surface-container": "#ebeeee",
+                      "on-secondary-container": "#325d7f",
+                      "action-gold": "#F7A400",
+                      "surface-container-high": "#e6e9e9",
+                      "secondary": "#376284",
+                      "secondary-fixed-dim": "#a1cbf2",
+                      "error": "#ba1a1a",
+                      "primary-container": "#00818d",
+                      "inverse-surface": "#2d3131",
+                      "secondary-fixed": "#cce5ff",
+                      "on-secondary-fixed": "#001e31",
+                      "on-primary-fixed-variant": "#004f57",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-fixed": "#001f23",
+                      "background": "#f7fafa",
+                      "tertiary-container": "#697779",
+                      "on-surface-variant": "#3d494b",
+                      "surface-variant": "#e0e3e3",
+                      "on-surface": "#181c1d",
+                      "surface-container-highest": "#e0e3e3",
+                      "surface-white": "#FFFFFF",
+                      "on-primary-container": "#f6feff",
+                      "outline": "#6d797b",
+                      "surface": "#f7fafa",
+                      "on-error-container": "#93000a",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#f7fafa",
+                      "tertiary-fixed": "#d6e5e7",
+                      "text-primary": "#001A29",
+                      "error-container": "#ffdad6",
+                      "primary-fixed": "#92f1ff",
+                      "on-secondary-fixed-variant": "#1c4a6b",
+                      "secondary-container": "#acd6fe",
+                      "on-background": "#181c1d",
+                      "tertiary-fixed-dim": "#bac9cb",
+                      "on-tertiary-fixed-variant": "#3b494b",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "primary-fixed-dim": "#60d7e6",
+                      "on-tertiary-container": "#f6feff",
+                      "surface-tint": "#006973",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f1f4f4",
+                      "tertiary": "#505e60",
+                      "surface-dim": "#d7dbdb",
+                      "outline-variant": "#bcc9cb",
+                      "text-muted": "#556B77",
+                      "on-tertiary-fixed": "#101e1f",
+                      "inverse-primary": "#60d7e6",
+                      "inverse-on-surface": "#eef1f1"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "24px",
+                      "margin-mobile": "16px",
+                      "sm": "12px",
+                      "xs": "4px",
+                      "margin-desktop": "64px",
+                      "xl": "80px",
+                      "lg": "48px",
+                      "base": "8px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "display-lg-mobile": [
+                              "Hanken Grotesk"
+                      ],
+                      "display-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-sm": [
+                              "Hanken Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "display-lg-mobile": [
+                              "36px",
+                              {
+                                      "lineHeight": "44px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            },
+          }
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+          font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom scrollbar for clinical tech feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f7fafa; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d7dbdb; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #bcc9cb; 
+        }
+      </style>
+</head>
+<body class="bg-background text-on-surface font-body-md h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 top-0 bg-surface-white shadow-sm flex flex-col py-md border-r border-surface-variant z-50">
+<!-- Header -->
+<div class="px-md mb-lg">
+<div class="flex items-center gap-sm mb-xs">
+<span class="material-symbols-outlined text-headline-md font-headline-md text-primary" data-icon="credit_card">credit_card</span>
+<h1 class="text-headline-md font-headline-md font-bold text-primary">BlazeCard</h1>
+</div>
+<p class="text-label-sm text-text-muted">Wallet Previewer</p>
+</div>
+<!-- Main Navigation Tabs -->
+<div class="flex-1 px-sm space-y-xs">
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span>Form</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+<span>Code</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-primary font-bold border-r-4 border-primary bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined fill" data-icon="visibility">visibility</span>
+<span>Visual</span>
+</a>
+</div>
+<!-- Visual Mode Toolbox (Specific to this state) -->
+<div class="px-md mt-lg flex-1 overflow-y-auto">
+<h3 class="font-label-sm text-text-muted uppercase mb-sm">Toolbox</h3>
+<div class="space-y-sm">
+<!-- Draggable elements -->
+<div class="p-sm bg-surface-white border border-surface-variant rounded-lg shadow-sm hover:shadow transition-shadow cursor-grab flex items-center gap-sm text-label-md">
+<span class="material-symbols-outlined text-text-muted" data-icon="drag_indicator">drag_indicator</span>
+<span class="material-symbols-outlined text-primary" data-icon="image">image</span>
+                    Logo Upload
+                </div>
+<div class="p-sm bg-surface-white border border-surface-variant rounded-lg shadow-sm hover:shadow transition-shadow cursor-grab flex items-center gap-sm text-label-md">
+<span class="material-symbols-outlined text-text-muted" data-icon="drag_indicator">drag_indicator</span>
+<span class="material-symbols-outlined text-primary" data-icon="palette">palette</span>
+                    Background Color
+                </div>
+<div class="p-sm bg-surface-white border border-surface-variant rounded-lg shadow-sm hover:shadow transition-shadow cursor-grab flex items-center gap-sm text-label-md">
+<span class="material-symbols-outlined text-text-muted" data-icon="drag_indicator">drag_indicator</span>
+<span class="material-symbols-outlined text-primary" data-icon="title">title</span>
+                    Text Block
+                </div>
+<div class="p-sm bg-surface-white border border-surface-variant rounded-lg shadow-sm hover:shadow transition-shadow cursor-grab flex items-center gap-sm text-label-md">
+<span class="material-symbols-outlined text-text-muted" data-icon="drag_indicator">drag_indicator</span>
+<span class="material-symbols-outlined text-primary" data-icon="qr_code_2">qr_code_2</span>
+                    QR Code
+                </div>
+</div>
+</div>
+<!-- Footer / CTA -->
+<div class="px-md mt-auto pt-md border-t border-surface-variant">
+<div class="space-y-xs mb-md">
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Support</span>
+</a>
+</div>
+<button class="w-full bg-primary text-on-primary py-sm px-md rounded font-label-md hover:bg-primary-container hover:shadow-md transition-all duration-200 active:scale-95">
+                Export Card
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-lg py-sm bg-surface/80 backdrop-blur-md sticky top-0 z-40 border-b border-surface-variant">
+<div class="text-headline-md font-headline-md font-bold text-primary">
+<!-- Branding handled in sidebar, this space can be used for contextual breadcrumbs or blank in this layout -->
+<span class="text-body-md font-medium text-text-muted">Visual Editor</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center text-on-surface-variant gap-sm">
+<span class="material-symbols-outlined hover:text-primary transition-colors cursor-pointer" data-icon="zoom_in">zoom_in</span>
+<span class="material-symbols-outlined hover:text-primary transition-colors cursor-pointer" data-icon="zoom_out">zoom_out</span>
+<span class="material-symbols-outlined hover:text-primary transition-colors cursor-pointer" data-icon="fullscreen">fullscreen</span>
+</div>
+<div class="h-8 w-px bg-surface-variant"></div>
+<img alt="User Account" class="w-8 h-8 rounded-full object-cover border border-surface-variant cursor-pointer hover:border-primary transition-colors" data-alt="A clean, professional headshot of a user with a subtle teal background gradient, representing a clinical tech professional profile picture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYckNzxez47h8-lu8WBilP1dUCUVT-g6yrS16lShDFNP9-vgjWafexHnKJMT3ICUSoYdhQFn4stBksYut08V8Av6N9fsJ5om52gaNkg98uu3naYNasRdJCUipiSoyQWsZU0I2XjJW3nPLJLyzJtqcAiG273MpTMptZd-StNu8NLWkehAeit6fvQWNqzLneH4tbZG6cec7wP9fA5C3nMvgc14H7-fw94Y9yQALzbTmSg1h0qhjSu9P_"/>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 overflow-y-auto bg-surface-container-low p-md">
+<!-- Hero Banner -->
+<div class="w-full max-w-4xl mx-auto mb-md rounded-xl overflow-hidden shadow-sm border border-surface-variant relative h-64 bg-surface-white">
+<img alt="BlazeCard Visual Hero" class="w-full h-full object-cover opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1Z2_PhjT2XlIuE9uDlF2xOPWZ6sLJjPG_2Wi-7ce2-e4gLcRyXIRNbYjNBiGphGlQiozKCnvPxww4DJKnGVMJ_UOG9fmdmsbHCDEmZKmv65d4tsjGWEHfG0EGrmhQHR69d16gkHMN_TTwqTbnz6guZRjbaeeuadX7F6iyFIwxdTgEkdkjJt_ml1nneHzsbg3D6ozmm5j2m3-gEUIAOLE3bzitRiBdKkb6rEzX1q5_6RQNn5_NSsNb"/>
+<div class="absolute inset-0 bg-gradient-to-r from-background/80 to-transparent flex items-center p-xl">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-primary mb-sm drop-shadow-sm">Visual Design Studio</h2>
+<p class="text-body-lg text-text-muted max-w-md">Drag, drop, and configure your BlazeCard wallet assets with pixel-perfect precision.</p>
+</div>
+</div>
+</div>
+<!-- Live Preview Editor Workspace -->
+<div class="w-full max-w-4xl mx-auto bg-surface-white border border-surface-variant rounded-xl shadow-sm overflow-hidden flex flex-col h-[600px]">
+<!-- Editor Toolbar -->
+<div class="bg-surface border-b border-surface-variant p-sm flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="font-label-sm text-primary uppercase tracking-widest bg-tertiary-fixed px-sm py-xs rounded">Live Preview</span>
+</div>
+<!-- Zoom Slider -->
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-text-muted text-sm" data-icon="remove">remove</span>
+<input class="w-24 h-1 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" max="150" min="50" type="range" value="100"/>
+<span class="material-symbols-outlined text-text-muted text-sm" data-icon="add">add</span>
+<span class="text-label-sm text-text-muted ml-sm">100%</span>
+</div>
+</div>
+<!-- Interactive Canvas Area -->
+<div class="flex-1 bg-surface-container-low relative overflow-hidden flex items-center justify-center p-xl background-grid pattern">
+<style>
+                        .background-grid {
+                            background-size: 20px 20px;
+                            background-image: linear-gradient(to right, #e0e3e3 1px, transparent 1px),
+                                              linear-gradient(to bottom, #e0e3e3 1px, transparent 1px);
+                        }
+                     </style>
+<!-- The Card (Editable Component) -->
+<div class="relative group">
+<!-- Selection Box / Handles (Visible on hover/active) -->
+<div class="absolute -inset-2 border-2 border-primary border-dashed rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+<!-- Drag Handles -->
+<div class="absolute -top-1 -left-1 w-2 h-2 bg-primary-container rounded-sm pointer-events-auto cursor-nwse-resize"></div>
+<div class="absolute -top-1 -right-1 w-2 h-2 bg-primary-container rounded-sm pointer-events-auto cursor-nesw-resize"></div>
+<div class="absolute -bottom-1 -left-1 w-2 h-2 bg-primary-container rounded-sm pointer-events-auto cursor-nesw-resize"></div>
+<div class="absolute -bottom-1 -right-1 w-2 h-2 bg-primary-container rounded-sm pointer-events-auto cursor-nwse-resize"></div>
+<!-- Context Menu Icon -->
+<div class="absolute -top-8 right-0 bg-surface-white border border-surface-variant shadow-sm rounded flex items-center p-xs pointer-events-auto">
+<span class="material-symbols-outlined text-text-muted hover:text-primary cursor-pointer" data-icon="edit">edit</span>
+</div>
+</div>
+<!-- Card Render -->
+<div class="w-[340px] h-[215px] rounded-xl shadow-lg relative overflow-hidden bg-gradient-to-br from-primary to-primary-container text-surface-white cursor-move">
+<!-- Card Content Placeholder -->
+<div class="absolute inset-0 p-lg flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div class="w-12 h-12 bg-surface-white/20 rounded flex items-center justify-center backdrop-blur-sm border border-surface-white/30">
+<span class="material-symbols-outlined text-surface-white" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<span class="material-symbols-outlined opacity-70" data-icon="contactless">contactless</span>
+</div>
+<div class="space-y-xs">
+<div class="text-label-sm opacity-80 uppercase tracking-widest font-mono">John Doe</div>
+<div class="text-headline-md font-mono tracking-wider opacity-90">•••• •••• •••• 4242</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom spacer -->
+<div class="h-xl"></div>
+</div>
+</main>
+</body></html>

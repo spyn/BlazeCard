@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BlazeCard - Visual Mode</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline": "#869395",
+                        "on-primary-fixed": "#001f23",
+                        "inverse-primary": "#006973",
+                        "secondary-fixed": "#cce5ff",
+                        "primary-fixed": "#92f1ff",
+                        "secondary-fixed-dim": "#a1cbf2",
+                        "on-tertiary-container": "#3c2500",
+                        "primary": "#60d7e6",
+                        "secondary-container": "#1f4d6e",
+                        "surface-elevated": "#242E33",
+                        "on-surface": "#dee3e7",
+                        "primary-fixed-dim": "#60d7e6",
+                        "on-tertiary-fixed-variant": "#633f00",
+                        "on-tertiary-fixed": "#291800",
+                        "surface": "#0e1417",
+                        "surface-container-low": "#161c1f",
+                        "outline-variant": "#3d494b",
+                        "tertiary-container": "#c68300",
+                        "on-primary-container": "#002f34",
+                        "surface-bright": "#343a3d",
+                        "surface-container-highest": "#303639",
+                        "inverse-on-surface": "#2b3135",
+                        "tertiary-fixed-dim": "#ffb953",
+                        "on-secondary": "#003351",
+                        "on-error": "#690005",
+                        "hbf-light-gray": "#F8F8F8",
+                        "secondary": "#a1cbf2",
+                        "surface-charcoal": "#1A2327",
+                        "surface-container": "#1a2024",
+                        "on-secondary-fixed": "#001e31",
+                        "tertiary-fixed": "#ffddb4",
+                        "on-tertiary": "#452b00",
+                        "on-primary": "#00363c",
+                        "surface-variant": "#303639",
+                        "error": "#ffb4ab",
+                        "hbf-white": "#FFFFFF",
+                        "background": "#0e1417",
+                        "on-secondary-fixed-variant": "#1c4a6b",
+                        "surface-container-high": "#252b2e",
+                        "surface-tint": "#60d7e6",
+                        "surface-dim": "#0e1417",
+                        "error-container": "#93000a",
+                        "tertiary": "#ffb953",
+                        "inverse-surface": "#dee3e7",
+                        "on-background": "#dee3e7",
+                        "primary-container": "#03a0af",
+                        "on-secondary-container": "#93bde3",
+                        "surface-container-lowest": "#090f12",
+                        "on-error-container": "#ffdad6",
+                        "on-surface-variant": "#bcc9cb",
+                        "on-primary-fixed-variant": "#004f57"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "margin-desktop": "40px",
+                        "unit": "4px",
+                        "editor-panel": "360px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "sidebar-width": "280px"
+                    },
+                    fontFamily: {
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "label-caps": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "code-block": ["JetBrains Mono"]
+                    },
+                    fontSize: {
+                        "headline-xl": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "600" }],
+                        "headline-lg-mobile": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+                        "label-caps": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "500" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+                        "code-block": ["13px", { lineHeight: "20px", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #12181B; /* Base Canvas */
+            color: theme('colors.on-surface');
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Grid Background for Preview Area */
+        .preview-grid {
+            background-size: 24px 24px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background-color: rgba(26, 35, 39, 0.6); /* #1A2327 at 60% */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid theme('colors.outline-variant');
+        }
+
+        /* Interactive Element Depth */
+        .interactive-depth {
+            border: 1px solid theme('colors.outline-variant');
+            transition: all 0.2s ease;
+        }
+        .interactive-depth:hover, .interactive-depth:focus-within {
+            border-color: theme('colors.primary');
+            box-shadow: 0 0 8px 0 rgba(0, 159, 174, 0.1);
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex font-body-md text-body-md">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-surface-container dark:bg-surface-container border-r border-outline-variant flex flex-col z-50">
+<!-- Header -->
+<div class="p-4 border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" data-icon="credit_card">credit_card</span>
+</div>
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary dark:text-primary">BlazeCard</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Fintech Card Previewer</p>
+</div>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<nav class="p-4 flex flex-col gap-2 border-b border-outline-variant">
+<!-- Form Tab (Inactive) -->
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-on-surface p-3 hover:bg-surface-elevated transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-label-caps text-label-caps uppercase">Form</span>
+</a>
+<!-- Code Tab (Inactive) -->
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-on-surface p-3 hover:bg-surface-elevated transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+<span class="font-label-caps text-label-caps uppercase">Code</span>
+</a>
+<!-- Visual Tab (Active) -->
+<a class="flex items-center gap-4 bg-secondary-container text-on-secondary-container rounded-lg p-3 hover:bg-surface-elevated transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+<span class="font-label-caps text-label-caps uppercase">Visual</span>
+</a>
+</nav>
+<!-- Toolbox Panel (Visual Mode Specific) -->
+<div class="flex-1 overflow-y-auto p-4 flex flex-col gap-6">
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-3">Toolbox</h3>
+<div class="grid grid-cols-2 gap-2">
+<button class="interactive-depth bg-surface rounded-lg p-3 flex flex-col items-center justify-center gap-2 hover:bg-surface-elevated">
+<span class="material-symbols-outlined text-primary" data-icon="upload_file">upload_file</span>
+<span class="font-body-sm text-body-sm">Logo Upload</span>
+</button>
+<button class="interactive-depth bg-surface rounded-lg p-3 flex flex-col items-center justify-center gap-2 hover:bg-surface-elevated">
+<span class="material-symbols-outlined text-primary" data-icon="palette">palette</span>
+<span class="font-body-sm text-body-sm">Background</span>
+</button>
+<button class="interactive-depth bg-surface rounded-lg p-3 flex flex-col items-center justify-center gap-2 hover:bg-surface-elevated">
+<span class="material-symbols-outlined text-primary" data-icon="title">title</span>
+<span class="font-body-sm text-body-sm">Text Block</span>
+</button>
+<button class="interactive-depth bg-surface rounded-lg p-3 flex flex-col items-center justify-center gap-2 hover:bg-surface-elevated">
+<span class="material-symbols-outlined text-primary" data-icon="qr_code_2">qr_code_2</span>
+<span class="font-body-sm text-body-sm">QR Code</span>
+</button>
+</div>
+</div>
+<!-- Quick Elements List -->
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-3">Card Elements</h3>
+<ul class="flex flex-col gap-2">
+<li class="flex items-center justify-between p-2 rounded hover:bg-surface-elevated border border-transparent hover:border-outline-variant cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary text-sm" data-icon="credit_card_heart">credit_card_heart</span>
+<span class="font-body-sm text-body-sm">Card Number</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="visibility">visibility</span>
+</li>
+<li class="flex items-center justify-between p-2 rounded hover:bg-surface-elevated border border-transparent hover:border-outline-variant cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary text-sm" data-icon="person">person</span>
+<span class="font-body-sm text-body-sm">Cardholder Name</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="visibility">visibility</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="p-4 border-t border-outline-variant flex flex-col gap-3">
+<button class="w-full bg-primary hover:bg-primary/90 text-on-primary font-body-md text-body-md font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                Export Card
+            </button>
+<div class="flex justify-between mt-2">
+<a class="flex items-center gap-2 text-on-surface-variant hover:text-primary font-body-sm text-body-sm transition-colors" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="settings">settings</span>
+                    Settings
+                </a>
+<a class="flex items-center gap-2 text-on-surface-variant hover:text-primary font-body-sm text-body-sm transition-colors" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="help">help</span>
+                    Support
+                </a>
+</div>
+</div>
+</aside>
+<!-- Main Workspace Area -->
+<main class="ml-[280px] flex-1 flex flex-col h-screen relative bg-surface-charcoal">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-[280px] z-40 bg-surface dark:bg-surface/60 backdrop-blur-xl border-b border-outline-variant h-16 px-8 flex justify-between items-center">
+<!-- Navigation Links -->
+<nav class="hidden md:flex gap-6 h-full items-center">
+<a class="text-on-surface-variant hover:text-primary font-body-sm text-body-sm h-full flex items-center hover:opacity-80 transition-opacity" href="#">Dashboard</a>
+<a class="text-on-surface-variant hover:text-primary font-body-sm text-body-sm h-full flex items-center hover:opacity-80 transition-opacity" href="#">Analytics</a>
+<a class="text-primary font-bold border-b-2 border-primary h-full flex items-center px-1" href="#">Assets</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex items-center interactive-depth rounded-full px-3 py-1 bg-surface-container">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm text-on-surface placeholder-on-surface-variant w-48 p-0" placeholder="Search assets..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+<button class="bg-surface-elevated hover:bg-surface-bright text-on-surface font-body-sm text-body-sm font-medium py-1.5 px-4 rounded-lg border border-primary transition-colors">
+                    Deploy
+                </button>
+</div>
+</header>
+<!-- Canvas Area -->
+<div class="mt-16 flex-1 flex flex-col relative overflow-hidden">
+<!-- Hero Background Banner -->
+<div class="absolute top-0 left-0 w-full h-64 z-0">
+<img alt="Hero background image showing dynamic modern elements" class="w-full h-full object-cover opacity-50" src="https://lh3.googleusercontent.com/aida/AP1WRLsm1761RAk4vNRdmcU9GXZb_gRZNbFzE5M5GUNnh5xkZMvww1DpbuwLStVOHfuxFPSKtzlmbko2L4MMsE4QI0kdIsdE5yG3RuvN1lr4uam5R-0tTfU0YYhd5vIchdwQvGRM0MIOTszJeKYOZDDcvkY-qSbocUh6xCjye2KI7O1DEMrbKuDcVMNCsTex-N9X2q4QjDfem_raNY-Hlstxt4wjRmtbTHpORWQQ7rNaYxoqFk2GrKjcWUM9gM8"/>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface-charcoal"></div>
+</div>
+<!-- Live Preview Stage -->
+<div class="flex-1 flex flex-col items-center justify-center p-8 z-10 relative">
+<!-- Stage Header / Controls -->
+<div class="w-full max-w-4xl flex justify-between items-end mb-6">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Live Preview</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Visual Editor Mode - Drag &amp; Drop enabled</p>
+</div>
+<div class="flex items-center gap-4 bg-surface-container p-2 rounded-lg border border-outline-variant">
+<button class="text-on-surface-variant hover:text-primary p-1 rounded"><span class="material-symbols-outlined text-sm" data-icon="remove">remove</span></button>
+<span class="font-label-caps text-label-caps">100%</span>
+<input class="w-24 accent-primary" max="150" min="50" type="range" value="100"/>
+<button class="text-on-surface-variant hover:text-primary p-1 rounded"><span class="material-symbols-outlined text-sm" data-icon="add">add</span></button>
+</div>
+</div>
+<!-- The Card Canvas -->
+<div class="w-full max-w-4xl h-[500px] preview-grid rounded-xl border border-outline-variant flex items-center justify-center relative overflow-hidden shadow-2xl bg-[#0e1417]/80 backdrop-blur-sm">
+<!-- Digital Wallet Card Render -->
+<div class="relative w-[340px] h-[215px] rounded-xl overflow-hidden shadow-lg border border-white/10 group cursor-move transition-transform hover:scale-105 duration-300">
+<!-- Card Background Texture / Shimmer -->
+<div class="absolute inset-0 bg-gradient-to-tr from-surface-elevated via-secondary-container to-primary-container opacity-90"></div>
+<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-30"></div>
+<!-- Card Glint Effect -->
+<div class="absolute top-0 left-[-100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] group-hover:left-[200%] transition-all duration-1000 ease-in-out"></div>
+<!-- Card Content -->
+<div class="relative z-10 p-5 flex flex-col justify-between h-full font-body-md">
+<div class="flex justify-between items-start">
+<div class="w-12 h-8 bg-white/20 rounded backdrop-blur-md border border-white/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="contactless">contactless</span>
+</div>
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-white tracking-widest opacity-80">BLAZE</span>
+</div>
+<div>
+<p class="text-white font-code-block text-lg tracking-[0.2em] mb-1 opacity-90 shadow-sm">**** **** **** 4092</p>
+<div class="flex justify-between items-end">
+<div class="flex flex-col">
+<span class="text-[10px] text-white/60 uppercase tracking-wider mb-0.5">Cardholder Name</span>
+<span class="text-white font-medium tracking-wide">ALEXANDER PRESTON</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-[10px] text-white/60 uppercase tracking-wider mb-0.5">Exp</span>
+<span class="text-white font-medium">12/28</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Layout Overlays (Simulating Editor Guides) -->
+<div class="absolute inset-0 pointer-events-none">
+<!-- Center guides -->
+<div class="absolute left-1/2 top-0 bottom-0 w-px bg-primary/20 border-l border-dashed border-primary/50"></div>
+<div class="absolute top-1/2 left-0 right-0 h-px bg-primary/20 border-t border-dashed border-primary/50"></div>
+</div>
+</div>
+<!-- Bottom Editor Context -->
+<div class="w-full max-w-4xl mt-4 flex justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Selection: Card Background Layer</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded bg-surface-elevated border border-outline-variant flex items-center justify-center text-on-surface hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="undo">undo</span></button>
+<button class="w-8 h-8 rounded bg-surface-elevated border border-outline-variant flex items-center justify-center text-on-surface hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="redo">redo</span></button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

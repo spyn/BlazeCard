@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BlazeCard - Code Mode</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#006670",
+                      "surface-container": "#ebeeee",
+                      "on-secondary-container": "#325d7f",
+                      "action-gold": "#F7A400",
+                      "surface-container-high": "#e6e9e9",
+                      "secondary": "#376284",
+                      "secondary-fixed-dim": "#a1cbf2",
+                      "error": "#ba1a1a",
+                      "primary-container": "#00818d",
+                      "inverse-surface": "#2d3131",
+                      "secondary-fixed": "#cce5ff",
+                      "on-secondary-fixed": "#001e31",
+                      "on-primary-fixed-variant": "#004f57",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-fixed": "#001f23",
+                      "background": "#f7fafa",
+                      "tertiary-container": "#697779",
+                      "on-surface-variant": "#3d494b",
+                      "surface-variant": "#e0e3e3",
+                      "on-surface": "#181c1d",
+                      "surface-container-highest": "#e0e3e3",
+                      "surface-white": "#FFFFFF",
+                      "on-primary-container": "#f6feff",
+                      "outline": "#6d797b",
+                      "surface": "#f7fafa",
+                      "on-error-container": "#93000a",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#f7fafa",
+                      "tertiary-fixed": "#d6e5e7",
+                      "text-primary": "#001A29",
+                      "error-container": "#ffdad6",
+                      "primary-fixed": "#92f1ff",
+                      "on-secondary-fixed-variant": "#1c4a6b",
+                      "secondary-container": "#acd6fe",
+                      "on-background": "#181c1d",
+                      "tertiary-fixed-dim": "#bac9cb",
+                      "on-tertiary-fixed-variant": "#3b494b",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "primary-fixed-dim": "#60d7e6",
+                      "on-tertiary-container": "#f6feff",
+                      "surface-tint": "#006973",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f1f4f4",
+                      "tertiary": "#505e60",
+                      "surface-dim": "#d7dbdb",
+                      "outline-variant": "#bcc9cb",
+                      "text-muted": "#556B77",
+                      "on-tertiary-fixed": "#101e1f",
+                      "inverse-primary": "#60d7e6",
+                      "inverse-on-surface": "#eef1f1"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "24px",
+                      "margin-mobile": "16px",
+                      "sm": "12px",
+                      "xs": "4px",
+                      "margin-desktop": "64px",
+                      "xl": "80px",
+                      "lg": "48px",
+                      "base": "8px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "display-lg-mobile": [
+                              "Hanken Grotesk"
+                      ],
+                      "display-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-sm": [
+                              "Hanken Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "display-lg-mobile": [
+                              "36px",
+                              {
+                                      "lineHeight": "44px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; background-color: #f7fafa; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .filled-icon { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="flex bg-background text-on-surface antialiased h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="bg-surface-white dark:bg-surface-container shadow-sm h-screen w-64 fixed left-0 top-0 flex flex-col h-full py-md border-r border-surface-variant z-50">
+<!-- Header -->
+<div class="px-md mb-lg">
+<h1 class="text-headline-md font-headline-md text-primary dark:text-primary-fixed">BlazeCard</h1>
+<p class="text-label-md font-label-md text-on-surface-variant">Wallet Previewer</p>
+</div>
+<!-- Mode Switcher Tabs -->
+<nav class="flex-1 px-sm">
+<ul class="space-y-sm">
+<li>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-body-md text-body-md">Form</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg text-primary font-bold border-r-4 border-primary bg-surface-container-low active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">code</span>
+<span class="font-body-md text-body-md">Code</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">visibility</span>
+<span class="font-body-md text-body-md">Visual</span>
+</a>
+</li>
+</ul>
+<!-- Code Snippets Area -->
+<div class="mt-lg px-md space-y-md">
+<h3 class="text-label-sm font-label-sm text-text-muted uppercase tracking-wider">Snippets</h3>
+<!-- .NET Passbook -->
+<div class="bg-surface-white border border-surface-variant rounded-lg p-sm shadow-sm">
+<div class="flex justify-between items-center mb-xs">
+<span class="text-label-md font-label-md font-semibold">.NET Passbook (Apple)</span>
+</div>
+<pre class="bg-surface-container-low p-sm rounded text-xs text-on-surface-variant overflow-x-auto"><code>var pass = new PassGenerator();
+pass.Generate(request);</code></pre>
+<div class="flex gap-sm mt-sm">
+<button class="flex-1 bg-surface-white border border-primary text-primary py-xs rounded hover:bg-surface-container-low transition-colors text-label-sm font-label-sm flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">content_copy</span> Copy
+                        </button>
+<button class="flex-1 bg-primary text-white py-xs rounded hover:shadow-md transition-shadow text-label-sm font-label-sm flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">build</span> Build
+                        </button>
+</div>
+</div>
+<!-- Google Wallet API -->
+<div class="bg-surface-white border border-surface-variant rounded-lg p-sm shadow-sm">
+<div class="flex justify-between items-center mb-xs">
+<span class="text-label-md font-label-md font-semibold">Google Wallet API</span>
+</div>
+<pre class="bg-surface-container-low p-sm rounded text-xs text-on-surface-variant overflow-x-auto"><code>const wallet = new Wallet();
+await wallet.createObject();</code></pre>
+<div class="flex gap-sm mt-sm">
+<button class="flex-1 bg-surface-white border border-primary text-primary py-xs rounded hover:bg-surface-container-low transition-colors text-label-sm font-label-sm flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">content_copy</span> Copy
+                        </button>
+<button class="flex-1 bg-primary text-white py-xs rounded hover:shadow-md transition-shadow text-label-sm font-label-sm flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">build</span> Build
+                        </button>
+</div>
+</div>
+</div>
+</nav>
+<!-- CTA & Footer -->
+<div class="px-md mt-auto space-y-md">
+<button class="w-full bg-primary text-white py-sm rounded-lg hover:shadow-md transition-shadow font-label-md text-label-md flex justify-center items-center gap-sm">
+                Export Card
+            </button>
+<ul class="space-y-xs">
+<li>
+<a class="flex items-center gap-sm px-sm py-xs text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</li>
+</ul>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 flex flex-col h-screen bg-background relative overflow-y-auto">
+<!-- TopAppBar -->
+<header class="bg-surface/80 backdrop-blur-md docked full-width top-0 sticky z-40 flex justify-between items-center px-lg py-sm">
+<div class="text-headline-md font-headline-md font-bold text-primary">BlazeCard</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">zoom_in</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">zoom_out</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">fullscreen</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-surface-variant overflow-hidden">
+<!-- Placeholder Profile Image -->
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="flex-1 p-lg flex flex-col gap-lg">
+<!-- Hero Banner -->
+<section class="w-full h-64 rounded-xl overflow-hidden shadow-sm relative border border-surface-variant">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1Z2_PhjT2XlIuE9uDlF2xOPWZ6sLJjPG_2Wi-7ce2-e4gLcRyXIRNbYjNBiGphGlQiozKCnvPxww4DJKnGVMJ_UOG9fmdmsbHCDEmZKmv65d4tsjGWEHfG0EGrmhQHR69d16gkHMN_TTwqTbnz6guZRjbaeeuadX7F6iyFIwxdTgEkdkjJt_ml1nneHzsbg3D6ozmm5j2m3-gEUIAOLE3bzitRiBdKkb6rEzX1q5_6RQNn5_NSsNb"/>
+</section>
+<!-- Live Preview Section -->
+<section class="flex-1 bg-surface-white rounded-xl shadow-sm border border-surface-variant p-lg flex flex-col">
+<div class="flex justify-between items-center mb-md">
+<h2 class="text-headline-md font-headline-md text-on-surface">Live Preview</h2>
+<!-- Zoom Slider -->
+<div class="flex items-center gap-sm bg-surface-container-low px-sm py-xs rounded-lg">
+<span class="material-symbols-outlined text-text-muted text-[18px]">zoom_out</span>
+<input class="w-32 accent-primary h-1 bg-surface-variant rounded-lg appearance-none cursor-pointer" max="150" min="50" type="range" value="100"/>
+<span class="material-symbols-outlined text-text-muted text-[18px]">zoom_in</span>
+</div>
+</div>
+<!-- Preview Area -->
+<div class="flex-1 bg-surface-container-lowest border-2 border-dashed border-surface-variant rounded-lg flex items-center justify-center p-lg relative overflow-hidden">
+<!-- Dummy Card Preview -->
+<div class="w-80 h-48 bg-gradient-to-br from-primary to-primary-container rounded-xl shadow-lg p-md text-white flex flex-col justify-between transform transition-transform duration-300 hover:scale-105">
+<div class="flex justify-between items-start">
+<span class="font-bold text-lg">BlazeCard Pass</span>
+<span class="material-symbols-outlined filled-icon">contactless</span>
+</div>
+<div class="space-y-1">
+<div class="text-xs opacity-80">Cardholder</div>
+<div class="font-semibold tracking-wider">JOHN DOE</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>
