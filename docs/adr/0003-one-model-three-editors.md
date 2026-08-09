@@ -1,0 +1,3 @@
+# One shared model; Form, Visual, and Code all edit it
+
+Configuration lives in a single in-memory model (`CardModel`). Form Mode, Visual Mode (fixed drop zones; Visual is a projection rebuilt on enter), and Code Mode all read and write that model. **Live Preview** always follows the model. Code panes re-emit continuously (debounced) when Form/Visual change the model; edits in Code parse back best-effort; on parse failure keep the last good model, warn, and use Form or **Build**/Regenerate for a clean re-sync. We rejected ephemeral-only Code Mode because the critical product loop is preview ↔ pasteable **dotnet-passbook** / Google snippets staying truthful to each other.
