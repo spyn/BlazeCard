@@ -1,0 +1,54 @@
+@using Microsoft.Extensions.Options
+@inject IBlazeCardStateService State
+@inject ISnackbar Snackbar
+@inject IOptions<BlazeCardOptions> Options
+
+
+<div class="mb-3">
+    <MudText Typo="Typo.caption">@Label (@RecommendedWidth×@RecommendedHeight at 2x)</MudText>
+    <InputFile OnChange="OnFile" accept="image/png,image/jpeg,image/webp" />
+    @if (!string.IsNullOrEmpty(Current))
+    {
+        <div class="d-flex align-center gap-2 mt-1">
+            <img src="@Current" alt="@Label" style="max-height:40px;max-width:120px" />
+            <MudButton Size="Size.Small" OnClick="Clear">Clear</MudButton>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public ImageSlot Slot { get; set; }
+    [Parameter] public string Label { get; set; } = "Image";
+    [Parameter] public int RecommendedWidth { get; set; }
+    [Parameter] public int RecommendedHeight { get; set; }
+
+    private string? Current => Slot switch
+    {
+        ImageSlot.Logo => State.Card.LogoImage,
+        ImageSlot.Icon => State.Card.IconImage,
+        ImageSlot.Strip => State.Card.StripImage,
+        ImageSlot.Hero => State.Card.HeroImage,
+        ImageSlot.Thumbnail => State.Card.ThumbnailImage,
+        _ => null
+    };
+
+    private async Task OnFile(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file is null) return;
+        if (file.Size > Options.Value.MaxImageSizeBytes)
+        {
+            Snackbar.Add("Image exceeds 5 MB limit.", Severity.Error);
+            return;
+        }
+
+        await using var stream = file.OpenReadStream(Options.Value.MaxImageSizeBytes);
+        using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+        var b64 = Convert.ToBase64String(ms.ToArray());
+        var mime = file.ContentType is { Length: > 0 } ct ? ct : "image/png";
+        State.SetImage(Slot, $"data:{mime};base64,{b64}");
+    }
+
+    private void Clear() => State.SetImage(Slot, null);
+}

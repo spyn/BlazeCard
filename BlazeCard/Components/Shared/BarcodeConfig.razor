@@ -1,0 +1,23 @@
+@implements IDisposable
+@inject IBlazeCardStateService State
+
+<MudSelect T="BarcodeFormat" Label="Format" Value="@State.Card.BarcodeFormat"
+           ValueChanged="OnFormat" Class="mb-2">
+    @foreach (BarcodeFormat format in Enum.GetValues<BarcodeFormat>())
+    {
+        <MudSelectItem T="BarcodeFormat" Value="@format">@format</MudSelectItem>
+    }
+</MudSelect>
+<MudTextField T="string" Label="Message" Value="@State.Card.BarcodeMessage"
+              ValueChanged="OnMessage" Immediate="true" Class="mb-2" />
+<MudTextField T="string" Label="Alt Text" Value="@State.Card.BarcodeAltText"
+              ValueChanged="OnAlt" Immediate="true" />
+
+@code {
+    protected override void OnInitialized() => State.OnStateChanged += StateHasChanged;
+    public void Dispose() => State.OnStateChanged -= StateHasChanged;
+
+    private void OnFormat(BarcodeFormat v) => State.UpdateCard(c => c.BarcodeFormat = v);
+    private void OnMessage(string v) => State.UpdateCard(c => c.BarcodeMessage = v ?? "");
+    private void OnAlt(string v) => State.UpdateCard(c => c.BarcodeAltText = v ?? "");
+}

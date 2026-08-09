@@ -1,0 +1,56 @@
+@if (Card is null) { return; }
+
+<div class="google-card" style="background-color: @Card.BackgroundColor; color: @Card.ForegroundColor">
+    <div class="google-card__top-bar">
+        @if (!string.IsNullOrEmpty(Card.LogoImage))
+        {
+            <img class="google-card__logo" src="@Card.LogoImage" alt="logo" />
+        }
+        <span class="google-card__org-name">@Card.OrganizationName</span>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Card.HeroImage))
+    {
+        <div class="google-card__hero">
+            <img class="google-card__hero-img" src="@Card.HeroImage" alt="hero" />
+        </div>
+    }
+
+    <div class="google-card__title-block">
+        @{
+            var primary = Card.PrimaryFields.FirstOrDefault();
+        }
+        @if (primary is not null)
+        {
+            <div class="google-card__subheader">@primary.Label</div>
+            <div class="google-card__header">@primary.Value</div>
+        }
+    </div>
+
+    @foreach (var f in Card.SecondaryFields.Concat(Card.AuxiliaryFields))
+    {
+        <div class="google-card__row">
+            <span class="google-card__row-label">@f.Label</span>
+            <span>@f.Value</span>
+        </div>
+    }
+
+    @if (Card.BarcodeFormat != BarcodeFormat.None)
+    {
+        <div class="google-card__barcode-strip">
+            @if (Card.BarcodeFormat == BarcodeFormat.QR && !string.IsNullOrWhiteSpace(Card.BarcodeMessage))
+            {
+                <QrBarcodeGlyph Message="@Card.BarcodeMessage" />
+            }
+            else
+            {
+                <div class="google-card__barcode-placeholder">▮▮▮</div>
+                <div class="google-card__barcode-value">@Card.BarcodeMessage</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public CardModel Card { get; set; } = default!;
+}

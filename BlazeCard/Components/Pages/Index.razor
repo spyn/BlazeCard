@@ -1,0 +1,114 @@
+@page "/"
+@implements IDisposable
+@inject IBlazeCardStateService State
+@inject ISessionRestoreService SessionRestore
+@inject ISnackbar Snackbar
+
+<div class="blaze-shell">
+    <aside class="blaze-shell__sidebar">
+        <WorkspaceSidebar OnSessionExport="ExportSession" OnSessionImport="ImportSession" />
+    </aside>
+    <section class="blaze-shell__editor">
+        @switch (State.CurrentMode)
+        {
+            case AppMode.Form:
+                <FormMode />
+                break;
+            case AppMode.Code:
+                <CodeMode />
+                break;
+            case AppMode.Visual:
+                <VisualMode />
+                break;
+        }
+    </section>
+    <aside class="blaze-shell__preview">
+        <PreviewPanel />
+    </aside>
+</div>
+
+@code {
+    private bool _restored;
+
+    protected override void OnInitialized() => State.OnStateChanged += StateHasChanged;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _restored) return;
+        _restored = true;
+        try
+        {
+            var loaded = await SessionRestore.TryLoadAsync();
+            if (loaded is { Card: not null } value)
+            {
+                State.UpdateCard(c =>
+                {
+                    c.Description = value.Card!.Description;
+                    c.OrganizationName = value.Card.OrganizationName;
+                    c.LogoText = value.Card.LogoText;
+                    c.BackgroundColor = value.Card.BackgroundColor;
+                    c.LabelColor = value.Card.LabelColor;
+                    c.ForegroundColor = value.Card.ForegroundColor;
+                    c.HeaderFields = value.Card.HeaderFields;
+                    c.PrimaryFields = value.Card.PrimaryFields;
+                    c.SecondaryFields = value.Card.SecondaryFields;
+                    c.AuxiliaryFields = value.Card.AuxiliaryFields;
+                    c.BackFields = value.Card.BackFields;
+                    c.BarcodeFormat = value.Card.BarcodeFormat;
+                    c.BarcodeMessage = value.Card.BarcodeMessage;
+                    c.BarcodeAltText = value.Card.BarcodeAltText;
+                    c.DefaultLanguage = value.Card.DefaultLanguage;
+                    c.PassType = value.Card.PassType;
+                });
+                State.SetSkin(value.Skin);
+                State.SetAppearance(value.Appearance);
+            }
+        }
+        catch
+        {
+            // first visit / no storage
+        }
+    }
+
+    private async Task ExportSession()
+    {
+        var json = SessionRestore.ExportJson(State.Card, includeImages: false);
+        await SessionRestore.SaveAsync(State.Card, State.Skin, State.Appearance);
+        Snackbar.Add("Session saved (without images).", Severity.Success);
+        _ = json;
+    }
+
+    private async Task ImportSession()
+    {
+        var loaded = await SessionRestore.TryLoadAsync();
+        if (loaded?.Card is null)
+        {
+            Snackbar.Add("No saved session found.", Severity.Warning);
+            return;
+        }
+        State.UpdateCard(c =>
+        {
+            var src = loaded.Value.Card!;
+            c.Description = src.Description;
+            c.OrganizationName = src.OrganizationName;
+            c.LogoText = src.LogoText;
+            c.BackgroundColor = src.BackgroundColor;
+            c.LabelColor = src.LabelColor;
+            c.ForegroundColor = src.ForegroundColor;
+            c.HeaderFields = src.HeaderFields;
+            c.PrimaryFields = src.PrimaryFields;
+            c.SecondaryFields = src.SecondaryFields;
+            c.AuxiliaryFields = src.AuxiliaryFields;
+            c.BackFields = src.BackFields;
+            c.BarcodeFormat = src.BarcodeFormat;
+            c.BarcodeMessage = src.BarcodeMessage;
+            c.BarcodeAltText = src.BarcodeAltText;
+            c.DefaultLanguage = src.DefaultLanguage;
+        });
+        State.SetSkin(loaded.Value.Skin);
+        State.SetAppearance(loaded.Value.Appearance);
+        Snackbar.Add("Session restored.", Severity.Success);
+    }
+
+    public void Dispose() => State.OnStateChanged -= StateHasChanged;
+}

@@ -1,0 +1,28 @@
+@implements IDisposable
+@inject IBlazeCardStateService State
+
+<div class="drop-zone">
+    <MudText Typo="Typo.caption">@Label (max @MaxItems)</MudText>
+    @foreach (var component in Components)
+    {
+        <MudChip T="string" Size="Size.Small" OnClose="@(() => State.RemoveVisualComponent(component.Id))" Class="ma-1">
+            @(component.Field?.Label ?? component.Type.ToString())
+            @if (component.Field is not null)
+            {
+                <span>: @component.Field.Value</span>
+            }
+        </MudChip>
+    }
+</div>
+
+@code {
+    [Parameter] public DropZoneId ZoneId { get; set; }
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public int MaxItems { get; set; } = 4;
+
+    private IEnumerable<VisualComponent> Components =>
+        State.VisualComponents.Where(c => c.Zone == ZoneId).OrderBy(c => c.Order);
+
+    protected override void OnInitialized() => State.OnStateChanged += StateHasChanged;
+    public void Dispose() => State.OnStateChanged -= StateHasChanged;
+}

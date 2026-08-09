@@ -1,0 +1,20 @@
+@inject IBlazeCardStateService State
+
+<MudPaper Class="pa-2 mb-2" Outlined="true">
+    <div class="d-flex gap-2">
+        <MudTextField T="string" Label="Key" Value="@Field.Key" ValueChanged="OnKey" Immediate="true" />
+        <MudTextField T="string" Label="Label" Value="@Field.Label" ValueChanged="OnLabel" Immediate="true" />
+        <MudTextField T="string" Label="Value" Value="@Field.Value" ValueChanged="OnValue" Immediate="true" />
+        <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="Remove" />
+    </div>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired] public FieldGroup Group { get; set; }
+    [Parameter, EditorRequired] public PassField Field { get; set; } = default!;
+
+    private void OnKey(string v) => State.UpdateField(Group, Field.Id, f => f.Key = v ?? "");
+    private void OnLabel(string v) => State.UpdateField(Group, Field.Id, f => f.Label = v ?? "");
+    private void OnValue(string v) => State.UpdateField(Group, Field.Id, f => f.Value = v ?? "");
+    private void Remove() => State.RemoveField(Group, Field.Id);
+}

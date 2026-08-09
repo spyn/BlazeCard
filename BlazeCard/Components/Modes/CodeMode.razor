@@ -1,0 +1,126 @@
+@implements IDisposable
+@inject IBlazeCardStateService State
+@inject IJSRuntime Js
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h5" Class="mb-2">Code Mode</MudText>
+@if (State.HasCodeSyncWarning)
+{
+    <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-2">@State.CodeSyncWarningMessage</MudAlert>
+}
+
+<div class="code-mode-grid">
+    <div>
+        <div class="d-flex align-center justify-space-between mb-1">
+            <MudText Typo="Typo.subtitle1">Apple (dotnet-passbook)</MudText>
+            <div>
+                <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="RegenerateApple">Regenerate Apple</MudButton>
+                <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="CopyApple">Copy</MudButton>
+            </div>
+        </div>
+        <MudTextField T="string" Lines="22" Variant="Variant.Outlined" Class="code-editor"
+                      Value="@_appleText" ValueChanged="OnAppleChanged" Immediate="true" />
+    </div>
+    <div>
+        <div class="d-flex align-center justify-space-between mb-1">
+            <MudText Typo="Typo.subtitle1">Google Wallet JSON</MudText>
+            <div>
+                <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="RegenerateGoogle">Regenerate Google</MudButton>
+                <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="CopyGoogle">Copy</MudButton>
+            </div>
+        </div>
+        <MudTextField T="string" Lines="22" Variant="Variant.Outlined" Class="code-editor"
+                      Value="@_googleText" ValueChanged="OnGoogleChanged" Immediate="true" />
+    </div>
+</div>
+
+<div class="mt-3">
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="BuildAsync">Build</MudButton>
+</div>
+
+@code {
+    private string _appleText = "";
+    private string _googleText = "";
+    private bool _appleDirty;
+    private bool _googleDirty;
+
+    protected override void OnInitialized()
+    {
+        SyncFromState();
+        State.OnStateChanged += OnStateChanged;
+    }
+
+    private void OnStateChanged()
+    {
+        if (!_appleDirty) _appleText = State.AppleCodeSnippet;
+        if (!_googleDirty) _googleText = State.GoogleCodeSnippet;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void SyncFromState()
+    {
+        _appleText = State.AppleCodeSnippet;
+        _googleText = State.GoogleCodeSnippet;
+    }
+
+    private async Task OnAppleChanged(string value)
+    {
+        _appleDirty = true;
+        _appleText = value ?? "";
+        await State.ApplyAppleCodeEditAsync(_appleText);
+        _appleDirty = false;
+    }
+
+    private async Task OnGoogleChanged(string value)
+    {
+        _googleDirty = true;
+        _googleText = value ?? "";
+        await State.ApplyGoogleCodeEditAsync(_googleText);
+        _googleDirty = false;
+    }
+
+
+
+    private async Task CopyApple()
+    {
+        var ok = await Js.InvokeAsync<bool>("blazeCard.copyToClipboard", State.AppleCodeSnippet);
+        Snackbar.Add(ok ? "Apple snippet copied." : "Copy failed.", ok ? Severity.Success : Severity.Error);
+    }
+
+    private async Task CopyGoogle()
+    {
+        var ok = await Js.InvokeAsync<bool>("blazeCard.copyToClipboard", State.GoogleCodeSnippet);
+        Snackbar.Add(ok ? "Google snippet copied." : "Copy failed.", ok ? Severity.Success : Severity.Error);
+    }
+
+    private async Task RegenerateApple()
+    {
+        await State.RegenerateAppleCodeAsync();
+        _appleText = State.AppleCodeSnippet;
+        _appleDirty = false;
+        Snackbar.Add("Apple snippet regenerated.", Severity.Info);
+    }
+
+    private async Task RegenerateGoogle()
+    {
+        await State.RegenerateGoogleCodeAsync();
+        _googleText = State.GoogleCodeSnippet;
+        _googleDirty = false;
+        Snackbar.Add("Google snippet regenerated.", Severity.Info);
+    }
+
+    private async Task BuildAsync()
+    {
+        var result = await State.BuildAsync();
+        SyncFromState();
+        _appleDirty = false;
+        _googleDirty = false;
+        if (result.Success)
+            Snackbar.Add("Build OK — snippets force-synced.", Severity.Success);
+        else
+            foreach (var err in result.ValidationErrors)
+                Snackbar.Add(err, Severity.Error);
+    }
+
+    public void Dispose() => State.OnStateChanged -= OnStateChanged;
+}

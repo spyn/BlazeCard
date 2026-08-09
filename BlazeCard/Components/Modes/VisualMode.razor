@@ -1,0 +1,26 @@
+@implements IDisposable
+@inject IBlazeCardStateService State
+
+<MudText Typo="Typo.h5" Class="mb-2">Visual Mode</MudText>
+<MudText Typo="Typo.body2" Class="mb-3 mud-text-secondary">Fixed drop zones — projection rebuilt from the shared model.</MudText>
+
+<div class="visual-mode">
+    <Toolbox OnAdd="OnToolboxAdd" />
+    <CanvasCard />
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (State.CurrentMode == AppMode.Visual)
+            State.ProjectVisualFromCard();
+        State.OnStateChanged += StateHasChanged;
+    }
+
+    private void OnToolboxAdd(ToolboxItemType type)
+    {
+        State.AddVisualComponent(new VisualComponent { Type = type });
+    }
+
+    public void Dispose() => State.OnStateChanged -= StateHasChanged;
+}

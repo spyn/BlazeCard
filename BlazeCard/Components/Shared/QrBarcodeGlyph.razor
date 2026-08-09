@@ -1,0 +1,21 @@
+@inject IJSRuntime Js
+
+<div id="@_id" class="qr-glyph"></div>
+
+@code {
+    [Parameter] public string Message { get; set; } = "";
+    private readonly string _id = $"qr-{Guid.NewGuid():N}";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (string.IsNullOrWhiteSpace(Message)) return;
+        try
+        {
+            await Js.InvokeVoidAsync("blazeCard.renderQr", _id, Message);
+        }
+        catch
+        {
+            // JS not ready
+        }
+    }
+}
