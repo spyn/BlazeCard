@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BlazeCard - Form Mode</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#006670",
+                        "surface-container": "#ebeeee",
+                        "on-secondary-container": "#325d7f",
+                        "action-gold": "#F7A400",
+                        "surface-container-high": "#e6e9e9",
+                        "secondary": "#376284",
+                        "secondary-fixed-dim": "#a1cbf2",
+                        "error": "#ba1a1a",
+                        "primary-container": "#00818d",
+                        "inverse-surface": "#2d3131",
+                        "secondary-fixed": "#cce5ff",
+                        "on-secondary-fixed": "#001e31",
+                        "on-primary-fixed-variant": "#004f57",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#001f23",
+                        "background": "#f7fafa",
+                        "tertiary-container": "#697779",
+                        "on-surface-variant": "#3d494b",
+                        "surface-variant": "#e0e3e3",
+                        "on-surface": "#181c1d",
+                        "surface-container-highest": "#e0e3e3",
+                        "surface-white": "#FFFFFF",
+                        "on-primary-container": "#f6feff",
+                        "outline": "#6d797b",
+                        "surface": "#f7fafa",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f7fafa",
+                        "tertiary-fixed": "#d6e5e7",
+                        "text-primary": "#001A29",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#92f1ff",
+                        "on-secondary-fixed-variant": "#1c4a6b",
+                        "secondary-container": "#acd6fe",
+                        "on-background": "#181c1d",
+                        "tertiary-fixed-dim": "#bac9cb",
+                        "on-tertiary-fixed-variant": "#3b494b",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#60d7e6",
+                        "on-tertiary-container": "#f6feff",
+                        "surface-tint": "#006973",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f1f4f4",
+                        "tertiary": "#505e60",
+                        "surface-dim": "#d7dbdb",
+                        "outline-variant": "#bcc9cb",
+                        "text-muted": "#556B77",
+                        "on-tertiary-fixed": "#101e1f",
+                        "inverse-primary": "#60d7e6",
+                        "inverse-on-surface": "#eef1f1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "margin-mobile": "16px",
+                        "sm": "12px",
+                        "xs": "4px",
+                        "margin-desktop": "64px",
+                        "xl": "80px",
+                        "lg": "48px",
+                        "base": "8px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="bg-surface-white dark:bg-surface-container shadow-sm h-screen w-64 fixed left-0 top-0 flex flex-col py-md border-r border-surface-variant z-50">
+<!-- Header -->
+<div class="px-md pb-lg border-b border-surface-variant flex items-center gap-sm">
+<span class="material-symbols-outlined text-headline-md font-headline-md text-primary dark:text-primary-fixed" data-icon="credit_card">credit_card</span>
+<div>
+<h1 class="text-headline-md font-headline-md text-primary dark:text-primary-fixed">BlazeCard</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Wallet Previewer</p>
+</div>
+</div>
+<!-- Mode Tabs -->
+<div class="px-sm pt-md pb-sm">
+<h2 class="font-label-sm text-label-sm text-text-muted mb-xs px-sm uppercase tracking-wider">Mode</h2>
+<ul class="flex flex-col gap-xs">
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-primary font-bold border-r-4 border-primary bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-label-md text-label-md">Form</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+<span class="font-label-md text-label-md">Code</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+<span class="font-label-md text-label-md">Visual</span>
+</a>
+</li>
+</ul>
+</div>
+<!-- Form Section -->
+<div class="flex-1 overflow-y-auto px-md py-sm">
+<h3 class="font-headline-md text-headline-md text-text-primary mb-sm">Card Details</h3>
+<form class="space-y-sm">
+<div>
+<label class="block font-label-md text-label-md text-secondary mb-xs">Card Title</label>
+<input class="w-full bg-surface-white border border-[#E6F5F7] rounded focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none px-sm py-xs font-body-md text-body-md text-on-surface" placeholder="e.g. Premium Health" type="text"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-secondary mb-xs">Member Name</label>
+<input class="w-full bg-surface-white border border-[#E6F5F7] rounded focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none px-sm py-xs font-body-md text-body-md text-on-surface" placeholder="John Doe" type="text"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-secondary mb-xs">Card Number</label>
+<input class="w-full bg-surface-white border border-[#E6F5F7] rounded focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none px-sm py-xs font-body-md text-body-md text-on-surface" placeholder="XXXX-XXXX-XXXX-XXXX" type="text"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-secondary mb-xs">Expiry Date</label>
+<input class="w-full bg-surface-white border border-[#E6F5F7] rounded focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none px-sm py-xs font-body-md text-body-md text-on-surface" placeholder="MM/YY" type="text"/>
+</div>
+</form>
+</div>
+<!-- CTA & Footer -->
+<div class="p-md mt-auto border-t border-surface-variant">
+<button class="w-full bg-primary hover:bg-primary-container text-surface-white font-body-md text-body-md py-sm rounded-lg transition-all duration-200 active:scale-95 shadow-sm hover:shadow-md mb-md flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[20px]" data-icon="bolt">bolt</span>
+                Build Card
+            </button>
+<ul class="flex flex-col gap-xs pt-sm border-t border-surface-variant">
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="help">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 flex flex-col h-screen overflow-hidden bg-background relative">
+<!-- TopAppBar -->
+<header class="bg-surface/80 backdrop-blur-md flex justify-between items-center px-lg py-sm docked full-width top-0 sticky z-40">
+<div class="flex items-center">
+<!-- Breadcrumb or context could go here, keeping it clean per design -->
+</div>
+<div class="flex items-center gap-md">
+<div class="flex gap-sm border-r border-surface-variant pr-md">
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer p-xs rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="zoom_in">zoom_in</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer p-xs rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="zoom_out">zoom_out</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer p-xs rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="fullscreen">fullscreen</span>
+</button>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-outline-variant">
+<span class="material-symbols-outlined text-secondary" data-icon="person">person</span>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 overflow-y-auto relative">
+<!-- Hero Banner -->
+<div class="w-full h-64 bg-surface-container-lowest border-b border-surface-variant relative overflow-hidden">
+<img alt="Hero Banner" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1Z2_PhjT2XlIuE9uDlF2xOPWZ6sLJjPG_2Wi-7ce2-e4gLcRyXIRNbYjNBiGphGlQiozKCnvPxww4DJKnGVMJ_UOG9fmdmsbHCDEmZKmv65d4tsjGWEHfG0EGrmhQHR69d16gkHMN_TTwqTbnz6guZRjbaeeuadX7F6iyFIwxdTgEkdkjJt_ml1nneHzsbg3D6ozmm5j2m3-gEUIAOLE3bzitRiBdKkb6rEzX1q5_6RQNn5_NSsNb"/>
+</div>
+<!-- Content -->
+<div class="max-w-[1200px] mx-auto px-gutter py-xl">
+<div class="flex items-center justify-between mb-lg">
+<div>
+<h2 class="font-display-lg text-display-lg text-text-primary">Live Preview</h2>
+<p class="font-body-md text-body-md text-text-muted mt-xs">Real-time visualization of your digital asset.</p>
+</div>
+<!-- Zoom Control -->
+<div class="flex items-center gap-sm bg-surface-white p-xs rounded-full border border-surface-variant shadow-[0_4px_12px_rgba(0,57,89,0.05)]">
+<span class="material-symbols-outlined text-text-muted pl-sm text-[20px]" data-icon="remove">remove</span>
+<input class="w-24 accent-primary" max="150" min="50" type="range" value="100"/>
+<span class="material-symbols-outlined text-text-muted pr-sm text-[20px]" data-icon="add">add</span>
+</div>
+</div>
+<!-- Preview Canvas Stage -->
+<div class="bg-surface-container-low rounded-xl border border-[#E6F5F7] min-h-[500px] flex items-center justify-center relative overflow-hidden p-lg">
+<!-- Subtle grid background -->
+<div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#6d797b 1px, transparent 1px); background-size: 24px 24px;"></div>
+<!-- The Card (Placeholder for visual) -->
+<div class="relative z-10 w-[350px] h-[220px] bg-gradient-to-br from-primary to-secondary rounded-xl p-md shadow-[0_20px_40px_rgba(0,57,89,0.15)] text-surface-white flex flex-col justify-between transform transition-transform duration-300 hover:scale-[1.02]">
+<div class="flex justify-between items-start">
+<span class="font-headline-md text-headline-md font-bold tracking-tight">Premium Health</span>
+<span class="material-symbols-outlined opacity-80" data-icon="contactless">contactless</span>
+</div>
+<div>
+<div class="font-body-lg text-body-lg tracking-widest font-mono mb-sm opacity-90">XXXX XXXX XXXX XXXX</div>
+<div class="flex justify-between items-end">
+<div>
+<div class="font-label-sm text-label-sm uppercase opacity-70 mb-xs">Member</div>
+<div class="font-body-md text-body-md font-medium">John Doe</div>
+</div>
+<div>
+<div class="font-label-sm text-label-sm uppercase opacity-70 mb-xs">Valid Thru</div>
+<div class="font-body-md text-body-md font-medium">12/25</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
