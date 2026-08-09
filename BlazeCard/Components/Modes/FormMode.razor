@@ -1,6 +1,5 @@
 @implements IDisposable
 @inject IBlazeCardStateService State
-@inject ISnackbar Snackbar
 
 <div class="form-mode">
     <MudExpansionPanels MultiExpansion="true" Class="bc-accordions" Elevation="0">
@@ -64,7 +63,6 @@
     {
         <div class="mt-4 d-flex gap-2">
             <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ApplyPreset">Apply Sample Preset</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="BuildAsync">Build</MudButton>
         </div>
     }
 </div>
@@ -85,14 +83,4 @@
     private void OnLabel(string v) => State.UpdateCard(c => c.LabelColor = v);
     private void OnFg(string v) => State.UpdateCard(c => c.ForegroundColor = v);
     private void ApplyPreset() => State.ApplyPreset("sample-member");
-
-    private async Task BuildAsync()
-    {
-        var result = await State.BuildAsync();
-        if (result.Success)
-            Snackbar.Add("Build OK — snippets re-synced. Open Code to copy.", Severity.Success);
-        else
-            foreach (var err in result.ValidationErrors)
-                Snackbar.Add(err, Severity.Error);
-    }
 }

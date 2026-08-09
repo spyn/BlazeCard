@@ -12,6 +12,11 @@
     --bc-preview-bg: #EDE8E1;
     --bc-preview-width: min(42vw, 480px);
     --bc-topbar-height: 56px;
+    --bc-phone-frame: #D8D2C8;
+    --bc-phone-screen: #F7F4EF;
+    --bc-phone-chrome: #B8B0A4;
+    --bc-phone-inset: rgba(44, 36, 28, 0.08);
+    --bc-phone-home: rgba(44, 36, 28, 0.22);
 }
 
 [data-appearance="dark"] {
@@ -25,6 +30,11 @@
     --bc-text-secondary: #A89F94;
     --bc-editor-bg: #1A1612;
     --bc-preview-bg: #0F0D0B;
+    --bc-phone-frame: #2A2622;
+    --bc-phone-screen: #171411;
+    --bc-phone-chrome: #0A0908;
+    --bc-phone-inset: rgba(255, 255, 255, 0.08);
+    --bc-phone-home: rgba(255, 255, 255, 0.28);
 }
 
 html, body {
@@ -269,12 +279,12 @@ html, body {
 
 .phone-frame {
     width: min(340px, 100%);
-    background: #1a1a1a;
+    background: var(--bc-phone-frame);
     border-radius: 36px;
     padding: 12px;
     box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
-        0 24px 60px rgba(44, 36, 28, 0.28);
+        0 0 0 1px var(--bc-phone-inset) inset,
+        0 24px 60px rgba(44, 36, 28, 0.18);
     position: relative;
 }
 
@@ -285,7 +295,7 @@ html, body {
 .phone-frame__notch {
     width: 108px;
     height: 22px;
-    background: #0a0a0a;
+    background: var(--bc-phone-chrome);
     border-radius: 0 0 14px 14px;
     margin: 0 auto 10px;
 }
@@ -298,7 +308,7 @@ html, body {
 }
 
 .phone-frame__screen {
-    background: #0b0b0b;
+    background: var(--bc-phone-screen);
     border-radius: 22px;
     padding: 14px 12px 18px;
     min-height: 520px;
@@ -312,7 +322,7 @@ html, body {
     width: 108px;
     height: 4px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.28);
+    background: var(--bc-phone-home);
     margin: 12px auto 2px;
 }
 
