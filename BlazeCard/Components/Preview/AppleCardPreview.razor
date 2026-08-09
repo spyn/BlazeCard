@@ -1,12 +1,24 @@
+@using Passbook.Generator
+
 @if (Card is null) { return; }
 
-<div class="apple-pass apple-pass--generic"
-     style="background-color: @Card.BackgroundColor; color: @Card.ForegroundColor">
+@{
+    var logo = Card.GetPassbookPreview(PassbookImage.Logo3X, PassbookImage.Logo2X, PassbookImage.Logo);
+    var strip = Card.GetPassbookPreview(PassbookImage.Strip3X, PassbookImage.Strip2X, PassbookImage.Strip);
+    var background = Card.GetPassbookPreview(PassbookImage.Background3X, PassbookImage.Background2X, PassbookImage.Background);
+    var thumbnail = Card.GetPassbookPreview(PassbookImage.Thumbnail3X, PassbookImage.Thumbnail2X, PassbookImage.Thumbnail);
+    var footer = Card.GetPassbookPreview(PassbookImage.Footer3X, PassbookImage.Footer2X, PassbookImage.Footer);
+    var faceStyle = string.IsNullOrEmpty(background)
+        ? $"background-color: {Card.BackgroundColor}; color: {Card.ForegroundColor}"
+        : $"background-color: {Card.BackgroundColor}; color: {Card.ForegroundColor}; background-image: url('{background}'); background-size: cover; background-position: center";
+}
+
+<div class="apple-pass apple-pass--generic" style="@faceStyle">
     <div class="apple-pass__header">
         <div class="apple-pass__logo-area">
-            @if (!string.IsNullOrEmpty(Card.LogoImage))
+            @if (!string.IsNullOrEmpty(logo))
             {
-                <img class="apple-pass__logo-img" src="@Card.LogoImage" alt="logo" />
+                <img class="apple-pass__logo-img" src="@logo" alt="logo" />
             }
             <span class="apple-pass__logo-text">@Card.LogoText</span>
         </div>
@@ -19,10 +31,16 @@
         }
     </div>
 
-    @if (!string.IsNullOrEmpty(Card.StripImage))
+    @if (!string.IsNullOrEmpty(strip))
     {
         <div class="apple-pass__strip">
-            <img class="apple-pass__strip-img" src="@Card.StripImage" alt="strip" />
+            <img class="apple-pass__strip-img" src="@strip" alt="strip" />
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(thumbnail))
+    {
+        <div class="apple-pass__thumb-wrap">
+            <img class="apple-pass__thumb" src="@thumbnail" alt="thumbnail" />
         </div>
     }
 
@@ -45,6 +63,13 @@
             </div>
         }
     </div>
+
+    @if (!string.IsNullOrEmpty(footer))
+    {
+        <div class="apple-pass__footer">
+            <img class="apple-pass__footer-img" src="@footer" alt="footer" />
+        </div>
+    }
 
     @if (Card.BarcodeFormat != BarcodeFormat.None)
     {

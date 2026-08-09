@@ -16,7 +16,10 @@ WORKDIR /app
 
 COPY --from=build /app/publish .
 
+RUN mkdir -p /app/dp-keys && chmod 777 /app/dp-keys
+
 ENV ASPNETCORE_HTTP_PORTS=8080
+ENV DataProtection__KeysPath=/app/dp-keys
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "BlazeCard.dll"]

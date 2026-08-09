@@ -65,7 +65,7 @@ public class SessionRestoreService : ISessionRestoreService
         var payload = new SessionPayload
         {
             Card = clone,
-            Skin = Skin.Hbf,
+            Skin = Skin.Blaze,
             Appearance = AppearanceMode.Light
         };
         return JsonSerializer.Serialize(payload, JsonOptions);
@@ -101,11 +101,10 @@ public class SessionRestoreService : ISessionRestoreService
 
     private static void ClearImages(CardModel card)
     {
-        card.LogoImage = null;
-        card.IconImage = null;
-        card.StripImage = null;
+        card.PassbookImages.Clear();
         card.HeroImage = null;
-        card.ThumbnailImage = null;
+        card.WideLogoImage = null;
+        card.ImageModuleImage = null;
     }
 
     private sealed class SessionPayload

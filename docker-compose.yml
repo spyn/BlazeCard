@@ -5,8 +5,14 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    # Local preview: root so the dp-keys volume is writable (aspnet image is non-root by default)
+    user: "0"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      DataProtection__KeysPath: /app/dp-keys
+    volumes:
+      # Persist antiforgery / Data Protection keys across container rebuilds
+      - blazecard-dp-keys:/app/dp-keys
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
@@ -14,3 +20,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
+volumes:
+  blazecard-dp-keys:

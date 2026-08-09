@@ -28,8 +28,14 @@ public class GenericObjectDto
     [JsonPropertyName("logo")]
     public ImageDto? Logo { get; set; }
 
+    [JsonPropertyName("wideLogo")]
+    public ImageDto? WideLogo { get; set; }
+
     [JsonPropertyName("heroImage")]
     public ImageDto? HeroImage { get; set; }
+
+    [JsonPropertyName("imageModulesData")]
+    public List<ImageModuleDataDto>? ImageModulesData { get; set; }
 
     [JsonPropertyName("textModulesData")]
     public List<TextModuleDataDto>? TextModulesData { get; set; }

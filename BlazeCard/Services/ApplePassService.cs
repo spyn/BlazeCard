@@ -1,5 +1,6 @@
 using System.Text;
 using BlazeCard.Models;
+using Passbook.Generator;
 
 namespace BlazeCard.Services;
 
@@ -169,17 +170,16 @@ public class ApplePassService : IApplePassService
 
     private static void AppendImagePlaceholders(StringBuilder sb, CardModel model)
     {
-        void Add(string? dataUri, string path)
-        {
-            if (string.IsNullOrEmpty(dataUri)) return;
-            sb.AppendLine($"// request.Images.Add(PassbookImage.Logo, File.ReadAllBytes(\"{path}\"));");
-        }
+        if (model.PassbookImages.Count == 0)
+            return;
 
-        Add(model.LogoImage, "path/to/logo@2x.png");
-        Add(model.IconImage, "path/to/icon@2x.png");
-        Add(model.StripImage, "path/to/strip@2x.png");
-        Add(model.HeroImage, "path/to/hero@2x.png");
-        Add(model.ThumbnailImage, "path/to/thumbnail@2x.png");
+        sb.AppendLine();
+        sb.AppendLine("// Images — PassbookImage slots (see Passbook.Generator.PassbookImage)");
+        foreach (var key in model.PassbookImages.Keys.OrderBy(k => k.ToString()))
+        {
+            var file = key.ToFilename();
+            sb.AppendLine($"request.Images.Add(PassbookImage.{key}, File.ReadAllBytes(\"path/to/{file}\"));");
+        }
     }
 
     private static string MapBarcode(BarcodeFormat format) => format switch

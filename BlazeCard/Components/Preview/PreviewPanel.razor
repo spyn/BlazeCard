@@ -2,25 +2,34 @@
 @inject IBlazeCardStateService State
 
 <div class="preview-panel">
-    <div class="d-flex align-center justify-space-between mb-2">
-        <MudText Typo="Typo.h6">Live Preview</MudText>
-        <MudButtonGroup Size="Size.Small" Variant="Variant.Outlined">
-            <MudButton OnClick="@(() => State.SetPreviewFocus(PreviewFocus.Dual))" Variant="@(State.PreviewFocus == PreviewFocus.Dual ? Variant.Filled : Variant.Outlined)">Dual</MudButton>
-            <MudButton OnClick="@(() => State.SetPreviewFocus(PreviewFocus.Apple))" Variant="@(State.PreviewFocus == PreviewFocus.Apple ? Variant.Filled : Variant.Outlined)">Apple</MudButton>
-            <MudButton OnClick="@(() => State.SetPreviewFocus(PreviewFocus.Google))" Variant="@(State.PreviewFocus == PreviewFocus.Google ? Variant.Filled : Variant.Outlined)">Google</MudButton>
-        </MudButtonGroup>
+    <div class="preview-panel__header">
+        <span class="preview-panel__label">Preview</span>
+        <div class="preview-segment" role="group" aria-label="Preview platform">
+            <button type="button"
+                    class="preview-segment__btn @(State.PreviewFocus == PreviewFocus.Apple ? "preview-segment__btn--active" : null)"
+                    @onclick="@(() => State.SetPreviewFocus(PreviewFocus.Apple))">Apple</button>
+            <button type="button"
+                    class="preview-segment__btn @(State.PreviewFocus == PreviewFocus.Google ? "preview-segment__btn--active" : null)"
+                    @onclick="@(() => State.SetPreviewFocus(PreviewFocus.Google))">Google</button>
+        </div>
     </div>
 
-    @if (State.PreviewFocus is PreviewFocus.Dual or PreviewFocus.Apple)
-    {
-        <MudText Typo="Typo.caption" Class="mb-1">Apple Wallet</MudText>
-        <AppleCardPreview Card="State.Card" />
-    }
-    @if (State.PreviewFocus is PreviewFocus.Dual or PreviewFocus.Google)
-    {
-        <MudText Typo="Typo.caption" Class="mt-4 mb-1">Google Wallet</MudText>
-        <GoogleCardPreview Card="State.Card" />
-    }
+    <div class="preview-stage">
+        <div class="phone-frame @(State.PreviewFocus == PreviewFocus.Google ? "phone-frame--android" : null)">
+            <div class="phone-frame__notch" aria-hidden="true"></div>
+            <div class="phone-frame__screen">
+                @if (State.PreviewFocus == PreviewFocus.Google)
+                {
+                    <GoogleCardPreview Card="State.Card" />
+                }
+                else
+                {
+                    <AppleCardPreview Card="State.Card" />
+                }
+            </div>
+            <div class="phone-frame__home" aria-hidden="true"></div>
+        </div>
+    </div>
 </div>
 
 @code {

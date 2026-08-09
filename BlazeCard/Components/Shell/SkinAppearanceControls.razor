@@ -1,21 +1,34 @@
 @implements IDisposable
 @inject IBlazeCardStateService State
 
-<div class="px-3 mt-3">
-    <MudText Typo="Typo.caption" Class="mud-text-secondary">Skin</MudText>
-    <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" Class="mt-1">
-        <MudButton OnClick="@(() => State.SetSkin(Skin.Hbf))" Variant="@(State.Skin == Skin.Hbf ? Variant.Filled : Variant.Outlined)">HBF</MudButton>
-        <MudButton OnClick="@(() => State.SetSkin(Skin.Blaze))" Variant="@(State.Skin == Skin.Blaze ? Variant.Filled : Variant.Outlined)">Blaze</MudButton>
-    </MudButtonGroup>
-
-    <MudText Typo="Typo.caption" Class="mud-text-secondary mt-3">Appearance</MudText>
-    <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" Class="mt-1">
-        <MudButton OnClick="@(() => State.SetAppearance(AppearanceMode.Light))" Variant="@(State.Appearance == AppearanceMode.Light ? Variant.Filled : Variant.Outlined)">Light</MudButton>
-        <MudButton OnClick="@(() => State.SetAppearance(AppearanceMode.Dark))" Variant="@(State.Appearance == AppearanceMode.Dark ? Variant.Filled : Variant.Outlined)">Dark</MudButton>
-    </MudButtonGroup>
-</div>
+@if (Compact)
+{
+    <div class="bc-skin-compact">
+        <MudMenu Dense="true" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+            <ActivatorContent>
+                <button type="button" class="bc-icon-btn" title="Appearance">⚙</button>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem OnClick="@(() => State.SetAppearance(AppearanceMode.Light))">Appearance: Light</MudMenuItem>
+                <MudMenuItem OnClick="@(() => State.SetAppearance(AppearanceMode.Dark))">Appearance: Dark</MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+    </div>
+}
+else
+{
+    <div class="px-3 mt-3">
+        <MudText Typo="Typo.caption" Class="mud-text-secondary">Appearance</MudText>
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" Class="mt-1">
+            <MudButton OnClick="@(() => State.SetAppearance(AppearanceMode.Light))" Variant="@(State.Appearance == AppearanceMode.Light ? Variant.Filled : Variant.Outlined)">Light</MudButton>
+            <MudButton OnClick="@(() => State.SetAppearance(AppearanceMode.Dark))" Variant="@(State.Appearance == AppearanceMode.Dark ? Variant.Filled : Variant.Outlined)">Dark</MudButton>
+        </MudButtonGroup>
+    </div>
+}
 
 @code {
+    [Parameter] public bool Compact { get; set; }
+
     protected override void OnInitialized() => State.OnStateChanged += StateHasChanged;
     public void Dispose() => State.OnStateChanged -= StateHasChanged;
 }

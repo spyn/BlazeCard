@@ -2,6 +2,7 @@ using BlazeCard.Models;
 using BlazeCard.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
+using Passbook.Generator;
 
 namespace BlazeCard.Tests;
 
@@ -23,12 +24,15 @@ public class SessionRestoreTests
             DefaultLanguage = "en-AU",
             BarcodeFormat = BarcodeFormat.QR,
             BarcodeMessage = "ABC",
-            LogoImage = "data:image/png;base64,SHOULD_NOT_PERSIST",
             PrimaryFields =
             [
                 new PassField { Key = "memberName", Label = "Member", Value = "Alex" }
             ]
         };
+        card.SetPassbookImage(PassbookImage.Logo2X, "data:image/png;base64,SHOULD_NOT_PERSIST");
+        card.HeroImage = "data:image/png;base64,HERO_SHOULD_NOT";
+        card.WideLogoImage = "data:image/png;base64,WIDE_SHOULD_NOT";
+        card.ImageModuleImage = "data:image/png;base64,MODULE_SHOULD_NOT";
 
         await restore.SaveAsync(card, Skin.Blaze, AppearanceMode.Dark);
         var loaded = await restore.TryLoadAsync();
@@ -41,7 +45,10 @@ public class SessionRestoreTests
         loaded.Value.Card.BackgroundColor.Should().Be("#112233");
         loaded.Value.Card.BarcodeMessage.Should().Be("ABC");
         loaded.Value.Card.PrimaryFields.Should().ContainSingle(f => f.Value == "Alex");
-        loaded.Value.Card.LogoImage.Should().BeNull();
+        loaded.Value.Card.PassbookImages.Should().BeEmpty();
+        loaded.Value.Card.HeroImage.Should().BeNull();
+        loaded.Value.Card.WideLogoImage.Should().BeNull();
+        loaded.Value.Card.ImageModuleImage.Should().BeNull();
         loaded.Value.Skin.Should().Be(Skin.Blaze);
         loaded.Value.Appearance.Should().Be(AppearanceMode.Dark);
 
