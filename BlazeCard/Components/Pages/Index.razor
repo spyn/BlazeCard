@@ -4,7 +4,7 @@
 @inject ISessionRestoreService SessionRestore
 @inject ISnackbar Snackbar
 
-<div class="blaze-shell">
+<div class="blaze-shell @(State.CurrentMode == AppMode.Final ? "blaze-shell--final" : null)">
     <section class="blaze-shell__editor">
         <div class="editor-toolbar">
             <nav class="editor-tabs" aria-label="Editor mode">
@@ -14,6 +14,9 @@
                 <button type="button"
                         class="editor-tab @(State.CurrentMode == AppMode.Code ? "editor-tab--active" : null)"
                         @onclick="@(() => State.SetMode(AppMode.Code))">Code</button>
+                <button type="button"
+                        class="editor-tab @(State.CurrentMode == AppMode.Final ? "editor-tab--active" : null)"
+                        @onclick="@(() => State.SetMode(AppMode.Final))">Final</button>
             </nav>
             <button type="button" class="editor-revert" @onclick="RevertAsync" title="Reload saved session">
                 <MudIcon Icon="@Icons.Material.Outlined.Replay" Size="Size.Small" />
@@ -22,13 +25,17 @@
         </div>
 
         <div class="editor-body">
-            @if (State.CurrentMode == AppMode.Code)
+            @switch (State.CurrentMode)
             {
-                <CodeMode />
-            }
-            else
-            {
-                <FormMode ShowFooterActions="false" />
+                case AppMode.Code:
+                    <CodeMode />
+                    break;
+                case AppMode.Final:
+                    <FinalMode />
+                    break;
+                default:
+                    <FormMode ShowFooterActions="false" />
+                    break;
             }
         </div>
 
@@ -43,9 +50,12 @@
         }
     </section>
 
-    <aside class="blaze-shell__preview">
-        <PreviewPanel />
-    </aside>
+    @if (State.CurrentMode != AppMode.Final)
+    {
+        <aside class="blaze-shell__preview">
+            <PreviewPanel />
+        </aside>
+    }
 </div>
 
 @code {

@@ -5,7 +5,7 @@ namespace BlazeCard.Services;
 public interface IApplePassService
 {
     /// <summary>
-    /// Full pasteable C# sample. App never executes Generate().
+    /// Full pasteable C# sample. Final tab may also call Generate() when PkPass certs are configured.
     /// </summary>
     string GenerateCodeSnippet(CardModel model);
 

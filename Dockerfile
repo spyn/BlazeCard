@@ -18,8 +18,11 @@ COPY --from=build /app/publish .
 
 RUN mkdir -p /app/dp-keys && chmod 777 /app/dp-keys
 
-ENV ASPNETCORE_HTTP_PORTS=8080
+ENV ASPNETCORE_HTTP_PORTS=570
 ENV DataProtection__KeysPath=/app/dp-keys
-EXPOSE 8080
+# Final tab builds a preview .pkpass package (no Apple signing certs required)
+ENV BlazeCard__PkPass__Enabled=true
+ENV BlazeCard__PkPass__UsePreviewCertificates=true
+EXPOSE 570
 
 ENTRYPOINT ["dotnet", "BlazeCard.dll"]

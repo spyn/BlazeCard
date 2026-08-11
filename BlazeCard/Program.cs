@@ -32,6 +32,7 @@ builder.Services.AddMudServices(config =>
 builder.Services.AddScoped<IBlazeCardStateService, BlazeCardStateService>();
 builder.Services.AddScoped<IApplePassService, ApplePassService>();
 builder.Services.AddScoped<IGoogleWalletService, GoogleWalletService>();
+builder.Services.AddScoped<IPkPassService, PkPassService>();
 builder.Services.AddScoped<ISessionRestoreService, SessionRestoreService>();
 builder.Services.AddScoped<ILocalStorage, JsLocalStorage>();
 
