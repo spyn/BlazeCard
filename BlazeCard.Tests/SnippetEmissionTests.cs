@@ -19,7 +19,7 @@ public class SnippetEmissionTests
             {
                 Key = "memberName",
                 Label = "Member Name",
-                Value = "Alex Taylor"
+                Value = "Guybrush Treepwood"
             });
         });
 
@@ -29,10 +29,10 @@ public class SnippetEmissionTests
         state.AppleCodeSnippet.Should().Contain("BlazeCard Pass");
         state.AppleCodeSnippet.Should().Contain("Blaze Inc.");
         state.AppleCodeSnippet.Should().Contain("memberName");
-        state.AppleCodeSnippet.Should().Contain("Alex Taylor");
+        state.AppleCodeSnippet.Should().Contain("Guybrush Treepwood");
 
         state.GoogleCodeSnippet.Should().Contain("Blaze Inc.");
-        state.GoogleCodeSnippet.Should().Contain("Alex Taylor");
+        state.GoogleCodeSnippet.Should().Contain("Guybrush Treepwood");
         state.GoogleCodeSnippet.Should().Contain("Member Name");
     }
 

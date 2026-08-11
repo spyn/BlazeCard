@@ -52,7 +52,8 @@ public class ApplePassService : IApplePassService
         AppendImagePlaceholders(sb, model);
 
         sb.AppendLine();
-        sb.AppendLine("// Certificates — load in your integrator backend (BlazeCard never signs)");
+        sb.AppendLine("// Certificates — Final tab uses an unsigned preview package by default.");
+        sb.AppendLine("// Integrators: load Apple Pass Type ID + WWDR certs before Generate() for Wallet installs.");
         sb.AppendLine("// request.PassbookCertificate = new X509Certificate2(\"path/to/pass.p12\", \"cert-password\");");
         sb.AppendLine("// request.AppleWWDRCACertificate = new X509Certificate2(\"path/to/AppleWWDRCA.cer\");");
         sb.AppendLine();

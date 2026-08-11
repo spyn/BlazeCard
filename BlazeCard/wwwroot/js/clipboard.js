@@ -15,14 +15,22 @@ window.blazeCard.copyToClipboard = async (text) => {
     }
 };
 
-window.blazeCard.downloadTextFile = (filename, mimeType, text) => {
-    const blob = new Blob([text], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
+window.blazeCard.downloadBase64File = (filename, mimeType, base64) => {
+    try {
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        const blob = new Blob([bytes], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        return true;
+    } catch {
+        return false;
+    }
 };
 
 window.blazeCard.getImageDimensions = (dataUri) => new Promise((resolve) => {

@@ -4,7 +4,7 @@
 @inject ISessionRestoreService SessionRestore
 @inject ISnackbar Snackbar
 
-<div class="blaze-shell">
+<div class="blaze-shell @(State.CurrentMode == AppMode.Final ? "blaze-shell--final" : null)">
     <section class="blaze-shell__editor">
         <div class="editor-toolbar">
             <nav class="editor-tabs" aria-label="Editor mode">
@@ -14,6 +14,9 @@
                 <button type="button"
                         class="editor-tab @(State.CurrentMode == AppMode.Code ? "editor-tab--active" : null)"
                         @onclick="@(() => State.SetMode(AppMode.Code))">Code</button>
+                <button type="button"
+                        class="editor-tab @(State.CurrentMode == AppMode.Final ? "editor-tab--active" : null)"
+                        @onclick="@(() => State.SetMode(AppMode.Final))">Final</button>
             </nav>
             <button type="button" class="editor-revert" @onclick="RevertAsync" title="Reload saved session">
                 <MudIcon Icon="@Icons.Material.Outlined.Replay" Size="Size.Small" />
@@ -22,13 +25,17 @@
         </div>
 
         <div class="editor-body">
-            @if (State.CurrentMode == AppMode.Code)
+            @switch (State.CurrentMode)
             {
-                <CodeMode />
-            }
-            else
-            {
-                <FormMode ShowFooterActions="false" />
+                case AppMode.Code:
+                    <CodeMode />
+                    break;
+                case AppMode.Final:
+                    <FinalMode />
+                    break;
+                default:
+                    <FormMode ShowFooterActions="false" />
+                    break;
             }
         </div>
 
@@ -39,27 +46,53 @@
                            OnClick="@(() => State.ApplyPreset("sample-member"))">
                     Apply Sample Preset
                 </MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="editor-footer__build"
-                           OnClick="BuildAsync">
-                    Build
-                </MudButton>
             </div>
         }
     </section>
 
-    <aside class="blaze-shell__preview">
-        <PreviewPanel />
-    </aside>
+    @if (State.CurrentMode != AppMode.Final)
+    {
+        <aside class="blaze-shell__preview">
+            <PreviewPanel />
+        </aside>
+    }
 </div>
 
 @code {
     private bool _restored;
+    private CancellationTokenSource? _saveCts;
 
     protected override void OnInitialized()
     {
         if (State.PreviewFocus == PreviewFocus.Dual)
             State.SetPreviewFocus(PreviewFocus.Apple);
-        State.OnStateChanged += StateHasChanged;
+        State.OnStateChanged += OnStateChanged;
+    }
+
+    private void OnStateChanged()
+    {
+        _ = InvokeAsync(StateHasChanged);
+        ScheduleSessionSave();
+    }
+
+    private void ScheduleSessionSave()
+    {
+        if (!_restored) return;
+        _saveCts?.Cancel();
+        _saveCts = new CancellationTokenSource();
+        var token = _saveCts.Token;
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(800, token);
+                if (token.IsCancellationRequested) return;
+                await SessionRestore.SaveAsync(State.Card, State.Skin, State.Appearance);
+            }
+            catch (TaskCanceledException)
+            {
+            }
+        }, token);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -115,16 +148,9 @@
         Snackbar.Add("Reverted to saved session.", Severity.Info);
     }
 
-    private async Task BuildAsync()
+    public void Dispose()
     {
-        await SessionRestore.SaveAsync(State.Card, State.Skin, State.Appearance);
-        var result = await State.BuildAsync();
-        if (result.Success)
-            Snackbar.Add("Build OK — snippets re-synced.", Severity.Success);
-        else
-            foreach (var err in result.ValidationErrors)
-                Snackbar.Add(err, Severity.Error);
+        _saveCts?.Cancel();
+        State.OnStateChanged -= OnStateChanged;
     }
-
-    public void Dispose() => State.OnStateChanged -= StateHasChanged;
 }

@@ -1,0 +1,213 @@
+@using Passbook.Generator
+@implements IDisposable
+@inject IBlazeCardStateService State
+@inject IPkPassService PkPass
+@inject IJSRuntime Js
+@inject ISnackbar Snackbar
+
+<div class="final-mode">
+    <div class="final-mode__intro">
+        <div class="d-flex align-center justify-space-between flex-wrap gap-2">
+            <div>
+                <MudText Typo="Typo.h6">Final card review</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">
+                    Builds a preview <code>.pkpass</code> package (pass.json, images, manifest) for inspection.
+                    No Apple signing certificates — not installable in Wallet.
+                </MudText>
+            </div>
+            <div class="d-flex gap-2">
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="RegenerateAsync" Disabled="_busy">
+                    Regenerate .pkpass
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                           Disabled="@(!(_result?.Success ?? false))"
+                           OnClick="DownloadAsync">
+                    Download .pkpass
+                </MudButton>
+            </div>
+        </div>
+    </div>
+
+    @if (_busy)
+    {
+        <MudProgressLinear Indeterminate="true" Class="mb-4" />
+    }
+
+    @if (_modelErrors.Count > 0)
+    {
+        <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-3">
+            <MudText Typo="Typo.subtitle2">Card model issues</MudText>
+            <ul class="final-mode__errors">
+                @foreach (var err in _modelErrors)
+                {
+                    <li>@err</li>
+                }
+            </ul>
+        </MudAlert>
+    }
+
+    @if (_result is { Success: false })
+    {
+        <MudAlert Severity="Severity.Error" Dense="true" Class="mb-4">
+            @_result.Error
+            @if (!PkPass.IsConfigured)
+            {
+                <div class="mt-2">
+                    Preview certs should be created automatically (<code>UsePreviewCertificates</code>)
+                    or baked by the Dockerfile into <code>/app/certs</code>.
+                </div>
+            }
+        </MudAlert>
+    }
+    else if (_result is { Success: true })
+    {
+        <MudAlert Severity="Severity.Success" Dense="true" Class="mb-4">
+            Preview package ready — @_result.Entries.Count entries · @_result.Bytes!.Length.ToString("N0") bytes
+            (@_result.FileName). Self-signed — will not install on a device.
+        </MudAlert>
+    }
+
+    <div class="final-cards">
+        <div class="final-card-block">
+            <div class="final-card-block__label">Apple Wallet (live model)</div>
+            <div class="phone-frame">
+                <div class="phone-frame__notch" aria-hidden="true"></div>
+                <div class="phone-frame__screen">
+                    <AppleCardPreview Card="State.Card" />
+                </div>
+                <div class="phone-frame__home" aria-hidden="true"></div>
+            </div>
+        </div>
+        <div class="final-card-block">
+            <div class="final-card-block__label">Google Wallet (live model)</div>
+            <div class="phone-frame phone-frame--android">
+                <div class="phone-frame__notch" aria-hidden="true"></div>
+                <div class="phone-frame__screen">
+                    <GoogleCardPreview Card="State.Card" />
+                </div>
+                <div class="phone-frame__home" aria-hidden="true"></div>
+            </div>
+        </div>
+    </div>
+
+    @if (_result is { Success: true, Entries: var entries })
+    {
+        <section class="final-assets">
+            <MudText Typo="Typo.subtitle1" Class="mb-2">Packaged .pkpass contents</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary mb-3">
+                Extracted from the signed zip PassGenerator produced (manifest, signature, images, pass.json).
+            </MudText>
+
+            <div class="final-assets__grid">
+                @foreach (var entry in entries.Where(e => e.IsImage))
+                {
+                    <div class="final-asset">
+                        <img src="@entry.DataUri" alt="@entry.Name" class="final-asset__thumb" />
+                        <div class="final-asset__meta">
+                            <code>@entry.Name</code>
+                            <span>@entry.SizeBytes.ToString("N0") bytes</span>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @{
+                var passJson = entries.FirstOrDefault(e => e.Name.Equals("pass.json", StringComparison.OrdinalIgnoreCase));
+                var manifest = entries.FirstOrDefault(e => e.Name.Equals("manifest.json", StringComparison.OrdinalIgnoreCase));
+            }
+            @if (passJson?.Text is not null)
+            {
+                <MudText Typo="Typo.subtitle2" Class="mt-4 mb-2">pass.json</MudText>
+                <pre class="final-json">@passJson.Text</pre>
+            }
+            @if (manifest?.Text is not null)
+            {
+                <MudText Typo="Typo.subtitle2" Class="mt-4 mb-2">manifest.json</MudText>
+                <pre class="final-json">@manifest.Text</pre>
+            }
+
+            <MudText Typo="Typo.subtitle2" Class="mt-4 mb-2">All entries</MudText>
+            <ul class="final-entry-list">
+                @foreach (var entry in entries)
+                {
+                    <li><code>@entry.Name</code> — @entry.SizeBytes.ToString("N0") bytes</li>
+                }
+            </ul>
+        </section>
+    }
+</div>
+
+@code {
+    private bool _busy;
+    private PkPassGenerateResult? _result;
+    private List<string> _modelErrors = [];
+    private CancellationTokenSource? _regenCts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        State.OnStateChanged += OnChanged;
+        await RegenerateAsync();
+    }
+
+    private void OnChanged()
+    {
+        _ = InvokeAsync(async () =>
+        {
+            ScheduleRegen();
+            await Task.CompletedTask;
+        });
+    }
+
+    private void ScheduleRegen()
+    {
+        _regenCts?.Cancel();
+        _regenCts = new CancellationTokenSource();
+        var token = _regenCts.Token;
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(600, token);
+                if (token.IsCancellationRequested) return;
+                await InvokeAsync(RegenerateAsync);
+            }
+            catch (TaskCanceledException)
+            {
+            }
+        }, token);
+    }
+
+    private async Task RegenerateAsync()
+    {
+        _busy = true;
+        _modelErrors = BlazeCardStateService.Validate(State.Card);
+        StateHasChanged();
+
+        // PassGenerator is sync/CPU — off UI thread
+        var card = State.Card.Clone();
+        var result = await Task.Run(() => PkPass.Generate(card));
+        _result = result;
+        _busy = false;
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private async Task DownloadAsync()
+    {
+        if (_result is not { Success: true, Bytes: { Length: > 0 } bytes })
+            return;
+        var ok = await Js.InvokeAsync<bool>(
+            "blazeCard.downloadBase64File",
+            _result.FileName,
+            "application/vnd.apple.pkpass",
+            Convert.ToBase64String(bytes));
+        Snackbar.Add(ok ? "Preview .pkpass downloaded (not Wallet-installable)." : "Download failed.",
+            ok ? Severity.Info : Severity.Error);
+    }
+
+    public void Dispose()
+    {
+        _regenCts?.Cancel();
+        State.OnStateChanged -= OnChanged;
+    }
+}

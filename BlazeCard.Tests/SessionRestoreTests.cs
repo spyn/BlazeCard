@@ -26,7 +26,7 @@ public class SessionRestoreTests
             BarcodeMessage = "ABC",
             PrimaryFields =
             [
-                new PassField { Key = "memberName", Label = "Member", Value = "Alex" }
+                new PassField { Key = "memberName", Label = "Member", Value = "Guybrush" }
             ]
         };
         card.SetPassbookImage(PassbookImage.Logo2X, "data:image/png;base64,SHOULD_NOT_PERSIST");
@@ -44,7 +44,7 @@ public class SessionRestoreTests
         loaded.Value.Card.LogoText.Should().Be("Logo");
         loaded.Value.Card.BackgroundColor.Should().Be("#112233");
         loaded.Value.Card.BarcodeMessage.Should().Be("ABC");
-        loaded.Value.Card.PrimaryFields.Should().ContainSingle(f => f.Value == "Alex");
+        loaded.Value.Card.PrimaryFields.Should().ContainSingle(f => f.Value == "Guybrush");
         loaded.Value.Card.PassbookImages.Should().BeEmpty();
         loaded.Value.Card.HeroImage.Should().BeNull();
         loaded.Value.Card.WideLogoImage.Should().BeNull();

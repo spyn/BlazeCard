@@ -1,6 +1,6 @@
 namespace BlazeCard.Models;
 
-public enum AppMode { Form, Code }
+public enum AppMode { Form, Code, Final }
 
 public enum PassType
 {
