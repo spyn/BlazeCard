@@ -18,6 +18,19 @@ public class PassbookImageTests
     }
 
     [Fact]
+    public void Strip_slots_match_apple_allotted_space_not_a_stretch_flag()
+    {
+        // Apple Wallet cover-fills a fixed strip slot (crop, keep aspect).
+        // pass.json / dotnet-passbook have no stretch/distort option.
+        var strip = PassbookImageCatalog.AppleGroups.Single(g => g.Name == "Strip");
+        strip.Slots.Select(s => (s.Image, s.Width, s.Height)).Should().Equal(
+            (PassbookImage.Strip, 320, 123),
+            (PassbookImage.Strip2X, 640, 246),
+            (PassbookImage.Strip3X, 960, 369));
+        strip.Hint.Should().Contain("no stretch");
+    }
+
+    [Fact]
     public void Clearing_passbook_image_removes_slot()
     {
         var state = StateServiceFactory.Create();
