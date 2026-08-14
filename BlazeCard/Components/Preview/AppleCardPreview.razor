@@ -13,80 +13,127 @@
         : $"background-color: {Card.BackgroundColor}; color: {Card.ForegroundColor}; background-image: url('{background}'); background-size: cover; background-position: center";
 }
 
-<div class="apple-pass apple-pass--generic" style="@faceStyle">
-    <div class="apple-pass__header">
-        <div class="apple-pass__logo-area">
-            @if (!string.IsNullOrEmpty(logo))
-            {
-                <img class="apple-pass__logo-img" src="@logo" alt="logo" />
-            }
-            <span class="apple-pass__logo-text">@Card.LogoText</span>
-        </div>
-        @foreach (var f in Card.HeaderFields)
-        {
-            <div class="apple-pass__header-field" style="text-align:@CssAlign(f.TextAlignment)">
-                <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
-                <div class="apple-pass__field-value">@f.Value</div>
-            </div>
-        }
-    </div>
-
-    @if (!string.IsNullOrEmpty(strip))
-    {
-        <div class="apple-pass__strip@(Card.SuppressStripShine ? " apple-pass__strip--no-shine" : "")">
-            <img class="apple-pass__strip-img" src="@strip" alt="strip" />
-            @PrimaryFields
-        </div>
-    }
-    else
-    {
-        @if (!string.IsNullOrEmpty(thumbnail))
-        {
-            <div class="apple-pass__thumb-wrap">
-                <img class="apple-pass__thumb" src="@thumbnail" alt="thumbnail" />
-            </div>
-        }
-        @PrimaryFields
-    }
-
-    <div class="apple-pass__secondary-fields">
-        @foreach (var f in Card.SecondaryFields.Concat(Card.AuxiliaryFields))
-        {
-            <div class="apple-pass__secondary-field" style="text-align:@CssAlign(f.TextAlignment)">
-                <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
-                <div class="apple-pass__field-value">@f.Value</div>
-            </div>
-        }
-    </div>
-
-    @if (!string.IsNullOrEmpty(footer))
-    {
-        <div class="apple-pass__footer">
-            <img class="apple-pass__footer-img" src="@footer" alt="footer" />
-        </div>
-    }
-
-    @if (Card.BarcodeFormat != BarcodeFormat.None)
-    {
-        <div class="apple-pass__barcode-area">
-            @if (Card.BarcodeFormat == BarcodeFormat.QR && !string.IsNullOrWhiteSpace(Card.BarcodeMessage))
-            {
-                <QrBarcodeGlyph Message="@Card.BarcodeMessage" />
-            }
-            else
-            {
-                <div class="apple-pass__barcode-placeholder">
-                    <div class="apple-pass__barcode-icon">▮▮▮</div>
-                    <div class="apple-pass__barcode-text">@Card.BarcodeMessage</div>
-                    <div class="apple-pass__barcode-text">Only QR is scannable in preview</div>
+<div class="pass-flip @(ShowBack ? "pass-flip--back" : null)">
+    <div class="pass-flip__inner">
+        <div class="pass-flip__face pass-flip__face--front" aria-hidden="@(ShowBack ? "true" : "false")">
+            <div class="apple-pass apple-pass--generic" style="@faceStyle">
+                <div class="apple-pass__header">
+                    <div class="apple-pass__logo-area">
+                        @if (!string.IsNullOrEmpty(logo))
+                        {
+                            <img class="apple-pass__logo-img" src="@logo" alt="logo" />
+                        }
+                        <span class="apple-pass__logo-text">@Card.LogoText</span>
+                    </div>
+                    @foreach (var f in Card.HeaderFields)
+                    {
+                        <div class="apple-pass__header-field" style="text-align:@CssAlign(f.TextAlignment)">
+                            <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
+                            <div class="apple-pass__field-value">@f.Value</div>
+                        </div>
+                    }
                 </div>
-            }
+
+                @if (!string.IsNullOrEmpty(strip))
+                {
+                    <div class="apple-pass__strip@(Card.SuppressStripShine ? " apple-pass__strip--no-shine" : "")">
+                        <img class="apple-pass__strip-img" src="@strip" alt="strip" />
+                        @PrimaryFields
+                    </div>
+                }
+                else
+                {
+                    @if (!string.IsNullOrEmpty(thumbnail))
+                    {
+                        <div class="apple-pass__thumb-wrap">
+                            <img class="apple-pass__thumb" src="@thumbnail" alt="thumbnail" />
+                        </div>
+                    }
+                    @PrimaryFields
+                }
+
+                <div class="apple-pass__secondary-fields">
+                    @foreach (var f in Card.SecondaryFields.Concat(Card.AuxiliaryFields))
+                    {
+                        <div class="apple-pass__secondary-field" style="text-align:@CssAlign(f.TextAlignment)">
+                            <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
+                            <div class="apple-pass__field-value">@f.Value</div>
+                        </div>
+                    }
+                </div>
+
+                @if (!string.IsNullOrEmpty(footer))
+                {
+                    <div class="apple-pass__footer">
+                        <img class="apple-pass__footer-img" src="@footer" alt="footer" />
+                    </div>
+                }
+
+                @if (Card.BarcodeFormat != BarcodeFormat.None)
+                {
+                    <div class="apple-pass__barcode-area">
+                        @if (Card.BarcodeFormat == BarcodeFormat.QR && !string.IsNullOrWhiteSpace(Card.BarcodeMessage))
+                        {
+                            <QrBarcodeGlyph Message="@Card.BarcodeMessage" />
+                        }
+                        else
+                        {
+                            <div class="apple-pass__barcode-placeholder">
+                                <div class="apple-pass__barcode-icon">▮▮▮</div>
+                                <div class="apple-pass__barcode-text">@Card.BarcodeMessage</div>
+                                <div class="apple-pass__barcode-text">Only QR is scannable in preview</div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                @if (OnFlip.HasDelegate)
+                {
+                    <div class="apple-pass__flip-row">
+                        <button type="button"
+                                class="apple-pass__info-btn"
+                                aria-label="Show back of pass"
+                                @onclick="OnFlip">i</button>
+                    </div>
+                }
+            </div>
         </div>
-    }
+
+        <div class="pass-flip__face pass-flip__face--back" aria-hidden="@(!ShowBack ? "true" : "false")">
+            <div class="apple-pass apple-pass--back" style="@faceStyle">
+                <div class="apple-pass__back-toolbar">
+                    @if (OnFlip.HasDelegate)
+                    {
+                        <button type="button"
+                                class="apple-pass__done-btn"
+                                aria-label="Show front of pass"
+                                @onclick="OnFlip">Done</button>
+                    }
+                </div>
+                <div class="apple-pass__back-title">Information</div>
+                @if (Card.BackFields.Count == 0)
+                {
+                    <p class="apple-pass__back-empty">No back fields. Add them under Pass Fields → Back.</p>
+                }
+                else
+                {
+                    @foreach (var f in Card.BackFields)
+                    {
+                        <div class="apple-pass__back-row" style="text-align:@CssAlign(f.TextAlignment)">
+                            <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
+                            <div class="apple-pass__field-value">@f.Value</div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
 @code {
     [Parameter, EditorRequired] public CardModel Card { get; set; } = default!;
+    [Parameter] public bool ShowBack { get; set; }
+    [Parameter] public EventCallback OnFlip { get; set; }
 
     private RenderFragment PrimaryFields => @<div class="apple-pass__primary-fields">
         @foreach (var f in Card.PrimaryFields)

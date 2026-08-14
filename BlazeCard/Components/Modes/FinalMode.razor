@@ -69,21 +69,33 @@
 
     <div class="final-cards">
         <div class="final-card-block">
-            <div class="final-card-block__label">Apple Wallet (live model)</div>
+            <div class="final-card-block__header">
+                <div class="final-card-block__label">Apple Wallet (live model)</div>
+                <button type="button"
+                        class="preview-flip-btn @(_appleBack ? "preview-flip-btn--active" : null)"
+                        aria-pressed="@(_appleBack ? "true" : "false")"
+                        @onclick="ToggleAppleFlip">@(_appleBack ? "Front" : "Flip")</button>
+            </div>
             <div class="phone-frame">
                 <div class="phone-frame__notch" aria-hidden="true"></div>
                 <div class="phone-frame__screen">
-                    <AppleCardPreview Card="State.Card" />
+                    <AppleCardPreview Card="State.Card" ShowBack="_appleBack" OnFlip="ToggleAppleFlip" />
                 </div>
                 <div class="phone-frame__home" aria-hidden="true"></div>
             </div>
         </div>
         <div class="final-card-block">
-            <div class="final-card-block__label">Google Wallet (live model)</div>
+            <div class="final-card-block__header">
+                <div class="final-card-block__label">Google Wallet (live model)</div>
+                <button type="button"
+                        class="preview-flip-btn @(_googleBack ? "preview-flip-btn--active" : null)"
+                        aria-pressed="@(_googleBack ? "true" : "false")"
+                        @onclick="ToggleGoogleFlip">@(_googleBack ? "Front" : "Flip")</button>
+            </div>
             <div class="phone-frame phone-frame--android">
                 <div class="phone-frame__notch" aria-hidden="true"></div>
                 <div class="phone-frame__screen">
-                    <GoogleCardPreview Card="State.Card" />
+                    <GoogleCardPreview Card="State.Card" ShowBack="_googleBack" OnFlip="ToggleGoogleFlip" />
                 </div>
                 <div class="phone-frame__home" aria-hidden="true"></div>
             </div>
@@ -139,9 +151,14 @@
 
 @code {
     private bool _busy;
+    private bool _appleBack;
+    private bool _googleBack;
     private PkPassGenerateResult? _result;
     private List<string> _modelErrors = [];
     private CancellationTokenSource? _regenCts;
+
+    private void ToggleAppleFlip() => _appleBack = !_appleBack;
+    private void ToggleGoogleFlip() => _googleBack = !_googleBack;
 
     protected override async Task OnInitializedAsync()
     {

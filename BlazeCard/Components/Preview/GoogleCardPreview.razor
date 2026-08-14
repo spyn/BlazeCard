@@ -5,85 +5,116 @@
 @{
     var logo = Card.GetPassbookPreview(PassbookImage.Logo3X, PassbookImage.Logo2X, PassbookImage.Logo);
     var useWide = !string.IsNullOrEmpty(Card.WideLogoImage);
+    var faceStyle = $"background-color: {Card.BackgroundColor}; color: {Card.ForegroundColor}";
 }
 
-<div class="google-card" style="background-color: @Card.BackgroundColor; color: @Card.ForegroundColor">
-    <div class="google-card__top-bar">
-        @if (useWide)
-        {
-            <img class="google-card__wide-logo" src="@Card.WideLogoImage" alt="wide logo" />
-        }
-        else if (!string.IsNullOrEmpty(logo))
-        {
-            <img class="google-card__logo" src="@logo" alt="logo" />
-        }
-        else
-        {
-            <div class="google-card__logo-fallback" aria-hidden="true">@LogoInitial</div>
-        }
-        <span class="google-card__org-name">@Card.OrganizationName</span>
+<div class="pass-flip @(ShowBack ? "pass-flip--back" : null)">
+    <div class="pass-flip__inner">
+        <div class="pass-flip__face pass-flip__face--front" aria-hidden="@(ShowBack ? "true" : "false")">
+            <div class="google-card" style="@faceStyle">
+                <div class="google-card__top-bar">
+                    @if (useWide)
+                    {
+                        <img class="google-card__wide-logo" src="@Card.WideLogoImage" alt="wide logo" />
+                    }
+                    else if (!string.IsNullOrEmpty(logo))
+                    {
+                        <img class="google-card__logo" src="@logo" alt="logo" />
+                    }
+                    else
+                    {
+                        <div class="google-card__logo-fallback" aria-hidden="true">@LogoInitial</div>
+                    }
+                    <span class="google-card__org-name">@Card.OrganizationName</span>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Card.HeroImage))
+                {
+                    <div class="google-card__hero">
+                        <img class="google-card__hero-img" src="@Card.HeroImage" alt="hero" />
+                    </div>
+                }
+
+                <div class="google-card__title-block">
+                    @{
+                        var primary = Card.PrimaryFields.FirstOrDefault();
+                        var header = FirstNonEmpty(primary?.Value, Card.LogoText, Card.Description, "Generic pass");
+                    }
+                    @if (!string.IsNullOrWhiteSpace(primary?.Label))
+                    {
+                        <div class="google-card__subheader">@primary.Label</div>
+                    }
+                    <div class="google-card__header">@header</div>
+                </div>
+
+                @foreach (var f in Card.SecondaryFields.Concat(Card.AuxiliaryFields))
+                {
+                    <div class="google-card__row">
+                        <span class="google-card__row-label">@f.Label</span>
+                        <span>@f.Value</span>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Card.ImageModuleImage))
+                {
+                    <div class="google-card__module">
+                        <img class="google-card__module-img" src="@Card.ImageModuleImage" alt="image module" />
+                    </div>
+                }
+
+                @if (Card.BarcodeFormat != BarcodeFormat.None)
+                {
+                    <div class="google-card__barcode-strip">
+                        @if (Card.BarcodeFormat == BarcodeFormat.QR && !string.IsNullOrWhiteSpace(Card.BarcodeMessage))
+                        {
+                            <QrBarcodeGlyph Message="@Card.BarcodeMessage" />
+                        }
+                        else
+                        {
+                            <div class="google-card__barcode-placeholder">▮▮▮</div>
+                            <div class="google-card__barcode-value">@Card.BarcodeMessage</div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="pass-flip__face pass-flip__face--back" aria-hidden="@(!ShowBack ? "true" : "false")">
+            <div class="google-card google-card--back" style="@faceStyle">
+                <div class="google-card__top-bar google-card__top-bar--back">
+                    <span class="google-card__org-name">@Card.OrganizationName</span>
+                    @if (OnFlip.HasDelegate)
+                    {
+                        <button type="button"
+                                class="google-card__done-btn"
+                                aria-label="Show front of card"
+                                @onclick="OnFlip">Done</button>
+                    }
+                </div>
+                <div class="google-card__back-title">Details</div>
+                @if (Card.BackFields.Count == 0)
+                {
+                    <p class="google-card__back-empty">No back fields. Add them under Pass Fields → Back.</p>
+                }
+                else
+                {
+                    @foreach (var f in Card.BackFields)
+                    {
+                        <div class="google-card__row @(IsLink(f.Value) ? "google-card__row--link" : null)">
+                            <span class="google-card__row-label">@f.Label</span>
+                            <span>@f.Value</span>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
     </div>
-
-    @if (!string.IsNullOrEmpty(Card.HeroImage))
-    {
-        <div class="google-card__hero">
-            <img class="google-card__hero-img" src="@Card.HeroImage" alt="hero" />
-        </div>
-    }
-
-    <div class="google-card__title-block">
-        @{
-            var primary = Card.PrimaryFields.FirstOrDefault();
-            var header = FirstNonEmpty(primary?.Value, Card.LogoText, Card.Description, "Generic pass");
-        }
-        @if (!string.IsNullOrWhiteSpace(primary?.Label))
-        {
-            <div class="google-card__subheader">@primary.Label</div>
-        }
-        <div class="google-card__header">@header</div>
-    </div>
-
-    @foreach (var f in Card.SecondaryFields.Concat(Card.AuxiliaryFields).Concat(Card.BackFields.Where(f => !IsLink(f.Value))))
-    {
-        <div class="google-card__row">
-            <span class="google-card__row-label">@f.Label</span>
-            <span>@f.Value</span>
-        </div>
-    }
-
-    @foreach (var f in Card.BackFields.Where(f => IsLink(f.Value)))
-    {
-        <div class="google-card__row google-card__row--link">
-            <span class="google-card__row-label">@f.Label</span>
-            <span>@f.Value</span>
-        </div>
-    }
-
-    @if (!string.IsNullOrEmpty(Card.ImageModuleImage))
-    {
-        <div class="google-card__module">
-            <img class="google-card__module-img" src="@Card.ImageModuleImage" alt="image module" />
-        </div>
-    }
-
-    @if (Card.BarcodeFormat != BarcodeFormat.None)
-    {
-        <div class="google-card__barcode-strip">
-            @if (Card.BarcodeFormat == BarcodeFormat.QR && !string.IsNullOrWhiteSpace(Card.BarcodeMessage))
-            {
-                <QrBarcodeGlyph Message="@Card.BarcodeMessage" />
-            }
-            else
-            {
-                <div class="google-card__barcode-placeholder">▮▮▮</div>
-                <div class="google-card__barcode-value">@Card.BarcodeMessage</div>
-            }
-        </div>
-    }
 </div>
 
 @code {
     [Parameter, EditorRequired] public CardModel Card { get; set; } = default!;
+    [Parameter] public bool ShowBack { get; set; }
+    [Parameter] public EventCallback OnFlip { get; set; }
 
     private string LogoInitial
     {
