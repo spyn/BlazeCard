@@ -17,6 +17,10 @@
         {
             <img class="google-card__logo" src="@logo" alt="logo" />
         }
+        else
+        {
+            <div class="google-card__logo-fallback" aria-hidden="true">@LogoInitial</div>
+        }
         <span class="google-card__org-name">@Card.OrganizationName</span>
     </div>
 
@@ -30,17 +34,26 @@
     <div class="google-card__title-block">
         @{
             var primary = Card.PrimaryFields.FirstOrDefault();
+            var header = FirstNonEmpty(primary?.Value, Card.LogoText, Card.Description, "Generic pass");
         }
-        @if (primary is not null)
+        @if (!string.IsNullOrWhiteSpace(primary?.Label))
         {
             <div class="google-card__subheader">@primary.Label</div>
-            <div class="google-card__header">@primary.Value</div>
         }
+        <div class="google-card__header">@header</div>
     </div>
 
-    @foreach (var f in Card.SecondaryFields.Concat(Card.AuxiliaryFields))
+    @foreach (var f in Card.SecondaryFields.Concat(Card.AuxiliaryFields).Concat(Card.BackFields.Where(f => !IsLink(f.Value))))
     {
         <div class="google-card__row">
+            <span class="google-card__row-label">@f.Label</span>
+            <span>@f.Value</span>
+        </div>
+    }
+
+    @foreach (var f in Card.BackFields.Where(f => IsLink(f.Value)))
+    {
+        <div class="google-card__row google-card__row--link">
             <span class="google-card__row-label">@f.Label</span>
             <span>@f.Value</span>
         </div>
@@ -71,4 +84,26 @@
 
 @code {
     [Parameter, EditorRequired] public CardModel Card { get; set; } = default!;
+
+    private string LogoInitial
+    {
+        get
+        {
+            var title = Card.OrganizationName;
+            return string.IsNullOrWhiteSpace(title) ? "?" : char.ToUpperInvariant(title.Trim()[0]).ToString();
+        }
+    }
+
+    private static bool IsLink(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return false;
+        var v = value.Trim();
+        return v.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            || v.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            || v.StartsWith("tel:", StringComparison.OrdinalIgnoreCase)
+            || v.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string FirstNonEmpty(params string?[] values) =>
+        values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v)) ?? string.Empty;
 }

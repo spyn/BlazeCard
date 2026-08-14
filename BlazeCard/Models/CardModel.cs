@@ -41,6 +41,9 @@ public class CardModel
 
     public string DefaultLanguage { get; set; } = "en-AU";
 
+    /// <summary>Google Wallet <c>genericType</c> enum on GenericObject.</summary>
+    public string GoogleGenericType { get; set; } = "GENERIC_TYPE_UNSPECIFIED";
+
     public string? GetPassbookPreview(params PassbookImage[] preference)
     {
         foreach (var key in preference)
@@ -82,7 +85,8 @@ public class CardModel
             BarcodeFormat = BarcodeFormat,
             BarcodeMessage = BarcodeMessage,
             BarcodeAltText = BarcodeAltText,
-            DefaultLanguage = DefaultLanguage
+            DefaultLanguage = DefaultLanguage,
+            GoogleGenericType = GoogleGenericType
         };
     }
 }

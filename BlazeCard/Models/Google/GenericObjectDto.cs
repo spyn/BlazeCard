@@ -42,4 +42,10 @@ public class GenericObjectDto
 
     [JsonPropertyName("barcode")]
     public BarcodeDto? Barcode { get; set; }
+
+    [JsonPropertyName("state")]
+    public string? State { get; set; }
+
+    [JsonPropertyName("linksModuleData")]
+    public LinksModuleDataDto? LinksModuleData { get; set; }
 }
