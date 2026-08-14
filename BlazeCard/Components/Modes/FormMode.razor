@@ -17,6 +17,13 @@
                           ValueChanged="OnOrg" Immediate="true" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mt-3" />
             <MudTextField T="string" Label="Logo Text" Value="@State.Card.LogoText"
                           ValueChanged="OnLogoText" Immediate="true" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mt-3" />
+            <MudSelect T="string" Label="Google genericType" Value="@State.Card.GoogleGenericType"
+                       ValueChanged="OnGenericType" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mt-3">
+                @foreach (var t in GoogleGenericTypes.All)
+                {
+                    <MudSelectItem T="string" Value="@t">@t</MudSelectItem>
+                }
+            </MudSelect>
         </MudExpansionPanel>
 
         <MudExpansionPanel Text="Appearance" Expanded="true">
@@ -48,7 +55,7 @@
                 GenericObject image fields. Snippets use HTTPS placeholders; Live Preview uses your uploads.
                 Circular <code>logo</code> is driven by Apple Logo slots above.
             </MudText>
-            <ImageUploader GoogleSlot="GoogleImageSlot.Hero" Label="Hero" RecommendedWidth="1032" RecommendedHeight="812" ScaleLabel="Google" />
+            <ImageUploader GoogleSlot="GoogleImageSlot.Hero" Label="Hero" RecommendedWidth="1032" RecommendedHeight="336" ScaleLabel="Google" />
             <ImageUploader GoogleSlot="GoogleImageSlot.WideLogo" Label="Wide logo" RecommendedWidth="1280" RecommendedHeight="400" ScaleLabel="Google" />
             <ImageUploader GoogleSlot="GoogleImageSlot.ImageModule" Label="Image module (mainImage)" RecommendedWidth="1860" RecommendedHeight="600" ScaleLabel="Google" />
         </MudExpansionPanel>
@@ -85,6 +92,8 @@
     private void OnDescription(string v) => State.UpdateCard(c => c.Description = v ?? "");
     private void OnOrg(string v) => State.UpdateCard(c => c.OrganizationName = v ?? "");
     private void OnLogoText(string v) => State.UpdateCard(c => c.LogoText = v ?? "");
+    private void OnGenericType(string v) => State.UpdateCard(c =>
+        c.GoogleGenericType = string.IsNullOrWhiteSpace(v) ? "GENERIC_TYPE_UNSPECIFIED" : v);
     private void OnLang(string v) => State.UpdateCard(c => c.DefaultLanguage = string.IsNullOrWhiteSpace(v) ? "en-AU" : v);
     private void OnBg(string v) => State.UpdateCard(c => c.BackgroundColor = v);
     private void OnLabel(string v) => State.UpdateCard(c => c.LabelColor = v);

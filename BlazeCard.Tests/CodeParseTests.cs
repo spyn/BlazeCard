@@ -74,4 +74,26 @@ public class CodeParseTests
         state.Card.Description.Should().Be("Keep Me");
         state.Card.OrganizationName.Should().Be("Keep Org");
     }
+
+    [Fact]
+    public async Task Google_snippet_parse_reads_genericType_header_and_barcode()
+    {
+        var state = StateServiceFactory.Create();
+        state.UpdateCard(c =>
+        {
+            c.Description = "Pass";
+            c.OrganizationName = "Org";
+            c.GoogleGenericType = "GENERIC_GYM_MEMBERSHIP";
+            c.BarcodeFormat = BarcodeFormat.QR;
+            c.BarcodeMessage = "ABC-1";
+            c.PrimaryFields.Add(new PassField { Key = "primary", Label = "Member", Value = "Ada" });
+        });
+
+        await state.ApplyGoogleCodeEditAsync(state.GoogleCodeSnippet);
+
+        state.HasCodeSyncWarning.Should().BeFalse();
+        state.Card.GoogleGenericType.Should().Be("GENERIC_GYM_MEMBERSHIP");
+        state.Card.BarcodeMessage.Should().Be("ABC-1");
+        state.Card.PrimaryFields.Should().ContainSingle(f => f.Value == "Ada" && f.Label == "Member");
+    }
 }

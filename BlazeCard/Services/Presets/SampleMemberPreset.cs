@@ -13,6 +13,7 @@ public static class SampleMemberPreset
         card.LabelColor = "#FFFFFF";
         card.ForegroundColor = "#FFFFFF";
         card.DefaultLanguage = "en-AU";
+        card.GoogleGenericType = "GENERIC_LOYALTY_CARD";
         card.BarcodeFormat = BarcodeFormat.QR;
         card.BarcodeMessage = "BLAZE-SAMPLE-12345";
         card.BarcodeAltText = "BLAZE-SAMPLE-12345";
