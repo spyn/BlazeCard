@@ -73,7 +73,7 @@
                 <div class="final-card-block__label">Apple Wallet (live model)</div>
                 <button type="button"
                         class="preview-flip-btn @(_appleBack ? "preview-flip-btn--active" : null)"
-                        aria-pressed="@_appleBack"
+                        aria-pressed="@(_appleBack ? "true" : "false")"
                         @onclick="ToggleAppleFlip">@(_appleBack ? "Front" : "Flip")</button>
             </div>
             <div class="phone-frame">
@@ -89,7 +89,7 @@
                 <div class="final-card-block__label">Google Wallet (live model)</div>
                 <button type="button"
                         class="preview-flip-btn @(_googleBack ? "preview-flip-btn--active" : null)"
-                        aria-pressed="@_googleBack"
+                        aria-pressed="@(_googleBack ? "true" : "false")"
                         @onclick="ToggleGoogleFlip">@(_googleBack ? "Front" : "Flip")</button>
             </div>
             <div class="phone-frame phone-frame--android">
