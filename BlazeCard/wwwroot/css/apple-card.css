@@ -167,3 +167,69 @@
     font-family: monospace;
     opacity: 0.7;
 }
+
+.apple-pass__flip-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 12px 10px;
+    margin-top: auto;
+}
+
+.apple-pass__info-btn {
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    background: rgba(0, 0, 0, 0.18);
+    color: inherit;
+    font: italic 700 13px/1 Georgia, "Times New Roman", serif;
+    cursor: pointer;
+    opacity: 0.85;
+}
+
+.apple-pass__info-btn:hover {
+    opacity: 1;
+}
+
+.apple-pass--back {
+    min-height: 202px;
+    padding-bottom: 12px;
+}
+
+.apple-pass__back-toolbar {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px 4px;
+}
+
+.apple-pass__done-btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 2px;
+    opacity: 0.95;
+}
+
+.apple-pass__back-title {
+    font-size: 17px;
+    font-weight: 600;
+    padding: 8px 16px 10px;
+}
+
+.apple-pass__back-empty {
+    margin: 0;
+    padding: 4px 16px 16px;
+    font-size: 12px;
+    line-height: 1.4;
+    opacity: 0.75;
+}
+
+.apple-pass__back-row {
+    padding: 8px 16px;
+}

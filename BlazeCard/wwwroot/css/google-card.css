@@ -105,8 +105,50 @@
     font-size: 13px;
 }
 
-.google-card__row--link .google-card__row-label {
+.google-card__row-label {
     opacity: 0.7;
+}
+
+.google-card__row--link span:last-child {
+    text-decoration: underline;
+    word-break: break-all;
+}
+
+.google-card__top-bar--back {
+    justify-content: space-between;
+}
+
+.google-card__done-btn {
+    appearance: none;
+    margin-left: auto;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 2px 0;
+    opacity: 0.95;
+}
+
+.google-card__back-title {
+    font-size: 18px;
+    font-weight: 500;
+    padding: 14px 16px 8px;
+}
+
+.google-card__back-empty {
+    margin: 0;
+    padding: 4px 16px 16px;
+    font-size: 13px;
+    line-height: 1.4;
+    opacity: 0.75;
+}
+
+.google-card--back {
+    min-height: 180px;
+    padding-bottom: 12px;
 }
 
 .google-card__barcode-strip {

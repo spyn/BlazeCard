@@ -262,6 +262,63 @@ html, body {
     color: var(--bc-text-secondary);
 }
 
+.preview-panel__tools {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.preview-flip-btn {
+    appearance: none;
+    border: 1px solid var(--bc-border);
+    background: color-mix(in srgb, var(--bc-surface-raised) 80%, transparent);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--bc-text-secondary);
+    cursor: pointer;
+}
+
+.preview-flip-btn--active {
+    background: var(--bc-surface-raised);
+    color: var(--bc-text-primary);
+    box-shadow: 0 1px 2px rgba(44, 36, 28, 0.08);
+}
+
+.pass-flip {
+    width: 100%;
+    perspective: 1200px;
+}
+
+.pass-flip__inner {
+    display: grid;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.pass-flip--back .pass-flip__inner {
+    transform: rotateY(180deg);
+}
+
+.pass-flip__face {
+    grid-area: 1 / 1;
+    width: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.pass-flip__face--back {
+    transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pass-flip__inner {
+        transition: none;
+    }
+}
+
 .preview-segment {
     display: inline-flex;
     padding: 3px;
@@ -348,6 +405,7 @@ html, body {
     margin: 12px auto 2px;
 }
 
+.phone-frame .pass-flip,
 .phone-frame .apple-pass,
 .phone-frame .google-card {
     width: 100%;
@@ -530,6 +588,14 @@ html, body {
     flex-direction: column;
     align-items: center;
     gap: 12px;
+}
+
+.final-card-block__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 8px;
 }
 
 .final-card-block__label {

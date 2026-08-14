@@ -4,13 +4,19 @@
 <div class="preview-panel">
     <div class="preview-panel__header">
         <span class="preview-panel__label">Preview</span>
-        <div class="preview-segment" role="group" aria-label="Preview platform">
+        <div class="preview-panel__tools">
             <button type="button"
-                    class="preview-segment__btn @(State.PreviewFocus == PreviewFocus.Apple ? "preview-segment__btn--active" : null)"
-                    @onclick="@(() => State.SetPreviewFocus(PreviewFocus.Apple))">Apple</button>
-            <button type="button"
-                    class="preview-segment__btn @(State.PreviewFocus == PreviewFocus.Google ? "preview-segment__btn--active" : null)"
-                    @onclick="@(() => State.SetPreviewFocus(PreviewFocus.Google))">Google</button>
+                    class="preview-flip-btn @(_showBack ? "preview-flip-btn--active" : null)"
+                    aria-pressed="@_showBack"
+                    @onclick="ToggleFlip">@(_showBack ? "Front" : "Flip")</button>
+            <div class="preview-segment" role="group" aria-label="Preview platform">
+                <button type="button"
+                        class="preview-segment__btn @(State.PreviewFocus == PreviewFocus.Apple ? "preview-segment__btn--active" : null)"
+                        @onclick="@(() => SelectPlatform(PreviewFocus.Apple))">Apple</button>
+                <button type="button"
+                        class="preview-segment__btn @(State.PreviewFocus == PreviewFocus.Google ? "preview-segment__btn--active" : null)"
+                        @onclick="@(() => SelectPlatform(PreviewFocus.Google))">Google</button>
+            </div>
         </div>
     </div>
 
@@ -20,11 +26,11 @@
             <div class="phone-frame__screen">
                 @if (State.PreviewFocus == PreviewFocus.Google)
                 {
-                    <GoogleCardPreview Card="State.Card" />
+                    <GoogleCardPreview Card="State.Card" ShowBack="_showBack" OnFlip="ToggleFlip" />
                 }
                 else
                 {
-                    <AppleCardPreview Card="State.Card" />
+                    <AppleCardPreview Card="State.Card" ShowBack="_showBack" OnFlip="ToggleFlip" />
                 }
             </div>
             <div class="phone-frame__home" aria-hidden="true"></div>
@@ -33,6 +39,16 @@
 </div>
 
 @code {
+    private bool _showBack;
+
     protected override void OnInitialized() => State.OnStateChanged += StateHasChanged;
     public void Dispose() => State.OnStateChanged -= StateHasChanged;
+
+    private void ToggleFlip() => _showBack = !_showBack;
+
+    private void SelectPlatform(PreviewFocus focus)
+    {
+        _showBack = false;
+        State.SetPreviewFocus(focus);
+    }
 }
