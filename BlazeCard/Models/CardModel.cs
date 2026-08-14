@@ -14,6 +14,12 @@ public class CardModel
     public string LabelColor { get; set; } = "#FFFFFF";
     public string ForegroundColor { get; set; } = "#FFFFFF";
 
+    /// <summary>
+    /// Maps to <c>PassGeneratorRequest.SuppressStripShine</c> — Apple's only strip display flag.
+    /// Wallet still cover-crops; there is no stretch option.
+    /// </summary>
+    public bool SuppressStripShine { get; set; }
+
     public List<PassField> HeaderFields { get; set; } = [];
     public List<PassField> PrimaryFields { get; set; } = [];
     public List<PassField> SecondaryFields { get; set; } = [];
@@ -70,6 +76,7 @@ public class CardModel
             BackgroundColor = BackgroundColor,
             LabelColor = LabelColor,
             ForegroundColor = ForegroundColor,
+            SuppressStripShine = SuppressStripShine,
             HeaderFields = HeaderFields.Select(f => f.Clone()).ToList(),
             PrimaryFields = PrimaryFields.Select(f => f.Clone()).ToList(),
             SecondaryFields = SecondaryFields.Select(f => f.Clone()).ToList(),

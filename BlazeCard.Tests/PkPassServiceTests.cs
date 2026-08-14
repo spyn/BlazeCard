@@ -53,6 +53,33 @@ public class PkPassServiceTests
         result.Entries.First(e => e.Name == "signature").Text.Should().Contain("preview");
     }
 
+    [Fact]
+    public void Preview_package_writes_suppress_strip_shine_and_text_alignment()
+    {
+        var svc = CreateService();
+        var card = new CardModel
+        {
+            Description = "Pass",
+            OrganizationName = "Org",
+            SuppressStripShine = true
+        };
+        card.SetPassbookImage(PassbookImage.Icon2X,
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==");
+        card.PrimaryFields.Add(new PassField
+        {
+            Key = "name",
+            Label = "Name",
+            Value = "Ada",
+            TextAlignment = TextAlignment.Center
+        });
+
+        var result = svc.Generate(card);
+        result.Success.Should().BeTrue(result.Error);
+        var json = result.Entries.First(e => e.Name == "pass.json").Text;
+        json.Should().Contain("suppressStripShine");
+        json.Should().Contain("PKTextAlignmentCenter");
+    }
+
     private static PkPassService CreateService()
     {
         var options = Options.Create(new BlazeCardOptions

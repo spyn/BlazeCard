@@ -23,6 +23,12 @@
             <ColourPicker Label="Background" Value="@State.Card.BackgroundColor" ValueChanged="OnBg" />
             <ColourPicker Label="Label" Value="@State.Card.LabelColor" ValueChanged="OnLabel" />
             <ColourPicker Label="Foreground" Value="@State.Card.ForegroundColor" ValueChanged="OnFg" />
+            <MudCheckBox T="bool" Label="Suppress strip shine"
+                         Value="@State.Card.SuppressStripShine" ValueChanged="OnSuppressShine"
+                         Dense="true" Class="mt-3" />
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">
+                Apple’s only strip display flag (<code>SuppressStripShine</code>). Wallet still cover-crops the image — there is no stretch option in dotnet-passbook.
+            </MudText>
         </MudExpansionPanel>
 
         <MudExpansionPanel Text="Apple Passbook Images">
@@ -83,5 +89,6 @@
     private void OnBg(string v) => State.UpdateCard(c => c.BackgroundColor = v);
     private void OnLabel(string v) => State.UpdateCard(c => c.LabelColor = v);
     private void OnFg(string v) => State.UpdateCard(c => c.ForegroundColor = v);
+    private void OnSuppressShine(bool v) => State.UpdateCard(c => c.SuppressStripShine = v);
     private void ApplyPreset() => State.ApplyPreset("sample-member");
 }
