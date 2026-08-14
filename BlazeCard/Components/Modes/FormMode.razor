@@ -29,6 +29,7 @@
             <MudText Typo="Typo.caption" Class="mud-text-secondary mb-3">
                 Drag images into each slot. Maps to <code>PassbookImage</code> /
                 <code>request.Images.Add(...)</code> in the Apple snippet.
+                Strip artwork is cover-cropped to the slot — Wallet and dotnet-passbook have no stretch flag.
             </MudText>
             @foreach (var group in PassbookImageCatalog.AppleGroups)
             {

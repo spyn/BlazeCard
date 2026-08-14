@@ -118,7 +118,7 @@ public static class PassbookImageCatalog
             new(PassbookImage.Logo2X, "2x", 320, 100),
             new(PassbookImage.Logo3X, "3x", 480, 150)
         ]),
-        new("Strip", "Wide banner under the header (generic / store / coupon)",
+        new("Strip", "Wide banner under the header. Wallet cover-fills a 320×123 pt slot (crop, keep aspect) — no stretch option in pass.json or dotnet-passbook. Size PNGs to 1x/2x/3x. Generic Wallet ignores strip on device; Coupon/Store Card show it.",
         [
             new(PassbookImage.Strip, "1x", 320, 123),
             new(PassbookImage.Strip2X, "2x", 640, 246),

@@ -35,24 +35,19 @@
     {
         <div class="apple-pass__strip">
             <img class="apple-pass__strip-img" src="@strip" alt="strip" />
+            @PrimaryFields
         </div>
     }
-    else if (!string.IsNullOrEmpty(thumbnail))
+    else
     {
-        <div class="apple-pass__thumb-wrap">
-            <img class="apple-pass__thumb" src="@thumbnail" alt="thumbnail" />
-        </div>
-    }
-
-    <div class="apple-pass__primary-fields">
-        @foreach (var f in Card.PrimaryFields)
+        @if (!string.IsNullOrEmpty(thumbnail))
         {
-            <div>
-                <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
-                <div class="apple-pass__field-value apple-pass__field-value--primary">@f.Value</div>
+            <div class="apple-pass__thumb-wrap">
+                <img class="apple-pass__thumb" src="@thumbnail" alt="thumbnail" />
             </div>
         }
-    </div>
+        @PrimaryFields
+    }
 
     <div class="apple-pass__secondary-fields">
         @foreach (var f in Card.SecondaryFields.Concat(Card.AuxiliaryFields))
@@ -92,4 +87,14 @@
 
 @code {
     [Parameter, EditorRequired] public CardModel Card { get; set; } = default!;
+
+    private RenderFragment PrimaryFields => @<div class="apple-pass__primary-fields">
+        @foreach (var f in Card.PrimaryFields)
+        {
+            <div>
+                <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
+                <div class="apple-pass__field-value apple-pass__field-value--primary">@f.Value</div>
+            </div>
+        }
+    </div>;
 }
