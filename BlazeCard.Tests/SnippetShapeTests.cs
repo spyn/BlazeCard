@@ -50,5 +50,52 @@ public class SnippetShapeTests
         apple.Should().Contain("logo@2x.png");
         apple.Should().Contain("PassbookImage.Icon2X");
         apple.Should().Contain("using Passbook.Generator");
+        apple.Should().Contain("SerialNumber = Guid.NewGuid()");
+        apple.Should().Contain("PassStyle.Generic");
+    }
+
+    [Fact]
+    public void Apple_snippet_notes_icon_requirement_and_generic_ignores_strip()
+    {
+        var state = StateServiceFactory.Create();
+        state.UpdateCard(c =>
+        {
+            c.Description = "Pass";
+            c.OrganizationName = "Org";
+            c.BarcodeFormat = BarcodeFormat.None;
+            c.SetPassbookImage(PassbookImage.Strip2X, "data:image/png;base64,AAAA");
+        });
+
+        var apple = state.AppleCodeSnippet;
+        apple.Should().Contain("Apple requires icon.png");
+        apple.Should().Contain("PassStyle.Generic ignores strip.png");
+        apple.Should().Contain("no stretch");
+        apple.Should().Contain("PassbookImage.Strip2X");
+        apple.Should().NotContain("SuppressStripShine = true");
+    }
+
+    [Fact]
+    public void Apple_snippet_emits_suppress_strip_shine_and_field_alignment()
+    {
+        var state = StateServiceFactory.Create();
+        state.UpdateCard(c =>
+        {
+            c.Description = "Pass";
+            c.OrganizationName = "Org";
+            c.BarcodeFormat = BarcodeFormat.None;
+            c.SuppressStripShine = true;
+            c.PrimaryFields.Add(new PassField
+            {
+                Key = "name",
+                Label = "Name",
+                Value = "Ada",
+                TextAlignment = TextAlignment.Right
+            });
+        });
+
+        var apple = state.AppleCodeSnippet;
+        apple.Should().Contain("SuppressStripShine = true");
+        apple.Should().Contain("FieldTextAlignment.PKTextAlignmentRight");
+        apple.Should().Contain("AddPrimaryField");
     }
 }
