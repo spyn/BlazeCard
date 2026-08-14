@@ -5,6 +5,13 @@
         <MudTextField T="string" Label="Key" Value="@Field.Key" ValueChanged="OnKey" Immediate="true" />
         <MudTextField T="string" Label="Label" Value="@Field.Label" ValueChanged="OnLabel" Immediate="true" />
         <MudTextField T="string" Label="Value" Value="@Field.Value" ValueChanged="OnValue" Immediate="true" />
+        <MudSelect T="TextAlignment" Label="Align" Value="@Field.TextAlignment" ValueChanged="OnAlign"
+                   Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width:108px">
+            @foreach (var align in Enum.GetValues<TextAlignment>())
+            {
+                <MudSelectItem T="TextAlignment" Value="@align">@align</MudSelectItem>
+            }
+        </MudSelect>
         <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="Remove" />
     </div>
 </MudPaper>
@@ -16,5 +23,6 @@
     private void OnKey(string v) => State.UpdateField(Group, Field.Id, f => f.Key = v ?? "");
     private void OnLabel(string v) => State.UpdateField(Group, Field.Id, f => f.Label = v ?? "");
     private void OnValue(string v) => State.UpdateField(Group, Field.Id, f => f.Value = v ?? "");
+    private void OnAlign(TextAlignment v) => State.UpdateField(Group, Field.Id, f => f.TextAlignment = v);
     private void Remove() => State.RemoveField(Group, Field.Id);
 }

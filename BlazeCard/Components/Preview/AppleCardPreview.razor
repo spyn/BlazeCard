@@ -24,7 +24,7 @@
         </div>
         @foreach (var f in Card.HeaderFields)
         {
-            <div class="apple-pass__header-field">
+            <div class="apple-pass__header-field" style="text-align:@CssAlign(f.TextAlignment)">
                 <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
                 <div class="apple-pass__field-value">@f.Value</div>
             </div>
@@ -33,7 +33,7 @@
 
     @if (!string.IsNullOrEmpty(strip))
     {
-        <div class="apple-pass__strip">
+        <div class="apple-pass__strip@(Card.SuppressStripShine ? " apple-pass__strip--no-shine" : "")">
             <img class="apple-pass__strip-img" src="@strip" alt="strip" />
             @PrimaryFields
         </div>
@@ -52,7 +52,7 @@
     <div class="apple-pass__secondary-fields">
         @foreach (var f in Card.SecondaryFields.Concat(Card.AuxiliaryFields))
         {
-            <div class="apple-pass__secondary-field">
+            <div class="apple-pass__secondary-field" style="text-align:@CssAlign(f.TextAlignment)">
                 <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
                 <div class="apple-pass__field-value">@f.Value</div>
             </div>
@@ -91,10 +91,18 @@
     private RenderFragment PrimaryFields => @<div class="apple-pass__primary-fields">
         @foreach (var f in Card.PrimaryFields)
         {
-            <div>
+            <div style="text-align:@CssAlign(f.TextAlignment)">
                 <div class="apple-pass__field-label" style="color:@Card.LabelColor">@f.Label</div>
                 <div class="apple-pass__field-value apple-pass__field-value--primary">@f.Value</div>
             </div>
         }
     </div>;
+
+    private static string CssAlign(TextAlignment align) => align switch
+    {
+        TextAlignment.Center => "center",
+        TextAlignment.Right => "right",
+        TextAlignment.Natural => "start",
+        _ => "left"
+    };
 }

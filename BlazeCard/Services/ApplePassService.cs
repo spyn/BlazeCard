@@ -1,6 +1,7 @@
 using System.Text;
 using BlazeCard.Models;
 using Passbook.Generator;
+using Passbook.Generator.Fields;
 
 namespace BlazeCard.Services;
 
@@ -14,6 +15,7 @@ public class ApplePassService : IApplePassService
         sb.AppendLine();
         sb.AppendLine("using Passbook.Generator;");
         sb.AppendLine("using Passbook.Generator.Fields;");
+        sb.AppendLine("using System;");
         sb.AppendLine("using System.IO;");
         sb.AppendLine("using System.Security.Cryptography.X509Certificates;");
         sb.AppendLine();
@@ -22,6 +24,7 @@ public class ApplePassService : IApplePassService
         sb.AppendLine("{");
         sb.AppendLine("    PassTypeIdentifier = \"pass.com.example.yourpass\", // TODO: your Pass Type ID");
         sb.AppendLine("    TeamIdentifier = \"YOURTEAMID\", // TODO: your Apple Team ID");
+        sb.AppendLine("    SerialNumber = Guid.NewGuid().ToString(\"N\"), // required; unique per issued pass");
         sb.AppendLine($"    Description = \"{Escape(model.Description)}\",");
         sb.AppendLine($"    OrganizationName = \"{Escape(model.OrganizationName)}\",");
         sb.AppendLine($"    LogoText = \"{Escape(model.LogoText)}\",");
@@ -29,19 +32,21 @@ public class ApplePassService : IApplePassService
         sb.AppendLine($"    BackgroundColor = \"{ToRgb(model.BackgroundColor)}\",");
         sb.AppendLine($"    LabelColor = \"{ToRgb(model.LabelColor)}\",");
         sb.AppendLine($"    ForegroundColor = \"{ToRgb(model.ForegroundColor)}\",");
+        if (model.SuppressStripShine)
+            sb.AppendLine("    SuppressStripShine = true, // only strip display flag; Wallet still cover-crops, no stretch");
         sb.AppendLine("};");
         sb.AppendLine();
 
         foreach (var f in model.HeaderFields)
-            sb.AppendLine($"request.AddHeaderField(new StandardField(\"{Escape(f.Key)}\", \"{Escape(f.Label)}\", \"{Escape(f.Value)}\"));");
+            sb.AppendLine(FieldCall("AddHeaderField", f));
         foreach (var f in model.PrimaryFields)
-            sb.AppendLine($"request.AddPrimaryField(new StandardField(\"{Escape(f.Key)}\", \"{Escape(f.Label)}\", \"{Escape(f.Value)}\"));");
+            sb.AppendLine(FieldCall("AddPrimaryField", f));
         foreach (var f in model.SecondaryFields)
-            sb.AppendLine($"request.AddSecondaryField(new StandardField(\"{Escape(f.Key)}\", \"{Escape(f.Label)}\", \"{Escape(f.Value)}\"));");
+            sb.AppendLine(FieldCall("AddSecondaryField", f));
         foreach (var f in model.AuxiliaryFields)
-            sb.AppendLine($"request.AddAuxiliaryField(new StandardField(\"{Escape(f.Key)}\", \"{Escape(f.Label)}\", \"{Escape(f.Value)}\"));");
+            sb.AppendLine(FieldCall("AddAuxiliaryField", f));
         foreach (var f in model.BackFields)
-            sb.AppendLine($"request.AddBackField(new StandardField(\"{Escape(f.Key)}\", \"{Escape(f.Label)}\", \"{Escape(f.Value)}\"));");
+            sb.AppendLine(FieldCall("AddBackField", f));
 
         if (model.BarcodeFormat != BarcodeFormat.None)
         {
@@ -87,6 +92,7 @@ public class ApplePassService : IApplePassService
         if (description is not null) target.Description = description;
         if (organization is not null) target.OrganizationName = organization;
         if (logoText is not null) target.LogoText = logoText;
+        target.SuppressStripShine = code.Contains("SuppressStripShine = true", StringComparison.Ordinal);
 
         TryParseFields(code, "AddHeaderField", target.HeaderFields);
         TryParseFields(code, "AddPrimaryField", target.PrimaryFields);
@@ -107,20 +113,22 @@ public class ApplePassService : IApplePassService
             var start = code.IndexOf(needle, idx, StringComparison.Ordinal);
             if (start < 0) break;
             start += needle.Length;
-            var end = code.IndexOf("))", start, StringComparison.Ordinal);
+            var end = FindMatchingCloseParen(code, start - 1);
             if (end < 0) break;
             var args = code[start..end];
             var parts = SplitQuotedArgs(args);
             if (parts.Count >= 3)
             {
-                fields.Add(new PassField
+                var field = new PassField
                 {
                     Key = parts[0],
                     Label = parts[1],
-                    Value = parts[2]
-                });
+                    Value = parts[2],
+                    TextAlignment = ParseAlignment(code, end)
+                };
+                fields.Add(field);
             }
-            idx = end + 2;
+            idx = end + 1;
         }
 
         if (fields.Count > 0)
@@ -128,6 +136,40 @@ public class ApplePassService : IApplePassService
             target.Clear();
             target.AddRange(fields);
         }
+    }
+
+    private static int FindMatchingCloseParen(string code, int openParenIndex)
+    {
+        var depth = 0;
+        var inString = false;
+        for (var i = openParenIndex; i < code.Length; i++)
+        {
+            var c = code[i];
+            if (inString)
+            {
+                if (c == '\\' && i + 1 < code.Length) { i++; continue; }
+                if (c == '"') inString = false;
+                continue;
+            }
+            if (c == '"') { inString = true; continue; }
+            if (c == '(') depth++;
+            else if (c == ')')
+            {
+                depth--;
+                if (depth == 0) return i;
+            }
+        }
+        return -1;
+    }
+
+    private static TextAlignment ParseAlignment(string code, int ctorCloseParen)
+    {
+        var sliceEnd = Math.Min(code.Length, ctorCloseParen + 80);
+        var slice = code[ctorCloseParen..sliceEnd];
+        if (slice.Contains("PKTextAlignmentCenter", StringComparison.Ordinal)) return TextAlignment.Center;
+        if (slice.Contains("PKTextAlignmentRight", StringComparison.Ordinal)) return TextAlignment.Right;
+        if (slice.Contains("PKTextAlignmentNatural", StringComparison.Ordinal)) return TextAlignment.Natural;
+        return TextAlignment.Left;
     }
 
     private static List<string> SplitQuotedArgs(string args)
@@ -171,6 +213,25 @@ public class ApplePassService : IApplePassService
 
     private static void AppendImagePlaceholders(StringBuilder sb, CardModel model)
     {
+        var hasIcon = model.PassbookImages.Keys.Any(k =>
+            k is PassbookImage.Icon or PassbookImage.Icon2X or PassbookImage.Icon3X);
+        var hasStrip = model.PassbookImages.Keys.Any(k =>
+            k is PassbookImage.Strip or PassbookImage.Strip2X or PassbookImage.Strip3X);
+
+        if (hasStrip)
+        {
+            sb.AppendLine();
+            sb.AppendLine("// Strip: Wallet cover-crops to a fixed slot (no stretch in pass.json / dotnet-passbook).");
+            sb.AppendLine("// PassStyle.Generic ignores strip.png on device; Coupon / StoreCard / EventTicket show it.");
+        }
+
+        if (!hasIcon)
+        {
+            sb.AppendLine();
+            sb.AppendLine("// Apple requires icon.png (usually also @2x / @3x) in a real .pkpass bundle.");
+            sb.AppendLine("// request.Images.Add(PassbookImage.Icon2X, File.ReadAllBytes(\"path/to/icon@2x.png\"));");
+        }
+
         if (model.PassbookImages.Count == 0)
             return;
 
@@ -182,6 +243,23 @@ public class ApplePassService : IApplePassService
             sb.AppendLine($"request.Images.Add(PassbookImage.{key}, File.ReadAllBytes(\"path/to/{file}\"));");
         }
     }
+
+    private static string FieldCall(string method, PassField field)
+    {
+        var ctor = $"new StandardField(\"{Escape(field.Key)}\", \"{Escape(field.Label)}\", \"{Escape(field.Value)}\")";
+        var align = MapAlignment(field.TextAlignment);
+        if (align is not null)
+            ctor += $" {{ TextAlignment = FieldTextAlignment.{align} }}";
+        return $"request.{method}({ctor});";
+    }
+
+    private static string? MapAlignment(TextAlignment alignment) => alignment switch
+    {
+        TextAlignment.Center => nameof(FieldTextAlignment.PKTextAlignmentCenter),
+        TextAlignment.Right => nameof(FieldTextAlignment.PKTextAlignmentRight),
+        TextAlignment.Natural => nameof(FieldTextAlignment.PKTextAlignmentNatural),
+        _ => null
+    };
 
     private static string MapBarcode(BarcodeFormat format) => format switch
     {

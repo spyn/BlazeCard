@@ -31,6 +31,33 @@ public class CodeParseTests
     }
 
     [Fact]
+    public async Task Field_alignment_and_suppress_shine_round_trip_through_snippet()
+    {
+        var state = StateServiceFactory.Create();
+        state.UpdateCard(c =>
+        {
+            c.Description = "Pass";
+            c.OrganizationName = "Org";
+            c.BarcodeFormat = BarcodeFormat.None;
+            c.SuppressStripShine = true;
+            c.PrimaryFields.Add(new PassField
+            {
+                Key = "name",
+                Label = "Name",
+                Value = "Ada",
+                TextAlignment = TextAlignment.Right
+            });
+        });
+
+        await state.ApplyAppleCodeEditAsync(state.AppleCodeSnippet);
+
+        state.HasCodeSyncWarning.Should().BeFalse();
+        state.Card.SuppressStripShine.Should().BeTrue();
+        state.Card.PrimaryFields.Should().ContainSingle(f =>
+            f.Key == "name" && f.TextAlignment == TextAlignment.Right);
+    }
+
+    [Fact]
     public async Task Garbage_csharp_parse_keeps_last_good_model()
     {
         var state = StateServiceFactory.Create();

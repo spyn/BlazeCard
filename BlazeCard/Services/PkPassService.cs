@@ -143,19 +143,20 @@ public class PkPassService : IPkPassService
             Style = PassStyle.Generic,
             BackgroundColor = model.BackgroundColor,
             LabelColor = model.LabelColor,
-            ForegroundColor = model.ForegroundColor
+            ForegroundColor = model.ForegroundColor,
+            SuppressStripShine = model.SuppressStripShine ? true : null
         };
 
         foreach (var f in model.HeaderFields)
-            request.AddHeaderField(new StandardField(f.Key, f.Label, f.Value));
+            request.AddHeaderField(ToField(f));
         foreach (var f in model.PrimaryFields)
-            request.AddPrimaryField(new StandardField(f.Key, f.Label, f.Value));
+            request.AddPrimaryField(ToField(f));
         foreach (var f in model.SecondaryFields)
-            request.AddSecondaryField(new StandardField(f.Key, f.Label, f.Value));
+            request.AddSecondaryField(ToField(f));
         foreach (var f in model.AuxiliaryFields)
-            request.AddAuxiliaryField(new StandardField(f.Key, f.Label, f.Value));
+            request.AddAuxiliaryField(ToField(f));
         foreach (var f in model.BackFields)
-            request.AddBackField(new StandardField(f.Key, f.Label, f.Value));
+            request.AddBackField(ToField(f));
 
         if (model.BarcodeFormat != BarcodeFormat.None && !string.IsNullOrWhiteSpace(model.BarcodeMessage))
         {
@@ -205,6 +206,22 @@ public class PkPassService : IPkPassService
 
     private string ResolvePath(string path) =>
         Path.IsPathRooted(path) ? path : Path.GetFullPath(Path.Combine(_env.ContentRootPath, path));
+
+    private static StandardField ToField(PassField field)
+    {
+        var result = new StandardField(field.Key, field.Label, field.Value);
+        if (field.TextAlignment != TextAlignment.Left)
+            result.TextAlignment = MapAlignment(field.TextAlignment);
+        return result;
+    }
+
+    private static FieldTextAlignment MapAlignment(TextAlignment alignment) => alignment switch
+    {
+        TextAlignment.Center => FieldTextAlignment.PKTextAlignmentCenter,
+        TextAlignment.Right => FieldTextAlignment.PKTextAlignmentRight,
+        TextAlignment.Natural => FieldTextAlignment.PKTextAlignmentNatural,
+        _ => FieldTextAlignment.PKTextAlignmentLeft
+    };
 
     private static bool HasAnyIcon(CardModel model) =>
         model.PassbookImages.ContainsKey(PassbookImage.Icon)
